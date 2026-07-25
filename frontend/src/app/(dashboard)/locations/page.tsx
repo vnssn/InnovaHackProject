@@ -1,10 +1,14 @@
 "use client";
 
-import { useLocationCities, useLocationLocalities } from '@/hooks/useLocations';
+import { useLocationCities, useLocationLocalities, useLocationHeatmap } from '@/hooks/useLocations';
+import dynamic from 'next/dynamic';
+
+const MapComponent = dynamic(() => import('@/components/MapComponent'), { ssr: false });
 
 export default function LocationsPage() {
   const { data: citiesData, isLoading: isLoadingCities } = useLocationCities();
   const { data: localitiesData, isLoading: isLoadingLocalities } = useLocationLocalities();
+  const { data: heatmapData } = useLocationHeatmap();
 
   const cities = citiesData?.items || [];
   const localities = localitiesData?.items || [];
@@ -15,7 +19,9 @@ export default function LocationsPage() {
     <>
       <div className="flex flex-col w-full h-full min-h-[calc(100vh-4rem)]">
         <div className="relative w-full flex-grow flex" style={{ height: "calc(100vh - 4rem)" }}>
-          <div className="absolute inset-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1570168007204-dfb528c6678f?q=80&w=2000')" }}></div>
+          <div className="absolute inset-0 w-full h-full">
+            <MapComponent points={heatmapData?.points || []} />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80 pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/20 to-transparent pointer-events-none w-1/3 md:w-1/4"></div>
 

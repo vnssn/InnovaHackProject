@@ -61,7 +61,7 @@ export default function BudgetsPage() {
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               {currentMonth}
             </button>
-            <button className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
+            <button onClick={() => alert("Add budget coming soon!")} className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
               <span className="material-symbols-outlined transition-transform group-hover:rotate-90">add</span>
             </button>
           </div>
@@ -139,7 +139,7 @@ export default function BudgetsPage() {
                     const pct = budget.monthly_limit > 0 ? Math.round((budget.spent / budget.monthly_limit) * 100) : 0;
                     const remaining = budget.monthly_limit - budget.spent;
                     const colorClass = getBudgetColor(pct);
-                    const iconName = CATEGORY_ICONS[budget.category?.name?.toLowerCase()] ?? CATEGORY_ICONS['default'];
+                    const iconName = CATEGORY_ICONS[budget.category_name?.toLowerCase()] ?? CATEGORY_ICONS['default'];
 
                     return (
                       <div key={budget.id} className="bg-surface-container-low/40 backdrop-blur-xl p-md rounded-2xl flex flex-col gap-md hover:bg-surface-container-low/60 transition-colors">
@@ -149,11 +149,11 @@ export default function BudgetsPage() {
                               <span className={`material-symbols-outlined ${pct >= 90 ? 'text-error' : pct >= 70 ? 'text-tertiary' : 'text-secondary'}`}>{iconName}</span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-headline-md text-headline-md text-on-background">{budget.category?.name ?? 'Budget'}</span>
+                              <span className="font-headline-md text-headline-md text-on-background">{budget.category_name ?? 'Budget'}</span>
                               <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">{budget.month ?? currentMonth}</span>
                             </div>
                           </div>
-                          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-2">
+                          <button onClick={() => alert("Budget options coming soon")} className="text-on-surface-variant hover:text-on-surface transition-colors p-2">
                             <span className="material-symbols-outlined text-[20px]">more_vert</span>
                           </button>
                         </div>

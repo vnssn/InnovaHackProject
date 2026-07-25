@@ -40,7 +40,7 @@ export default function TransactionsPage() {
             <p className="font-body-lg text-body-lg text-on-surface-variant">Review and manage your financial activity across all linked accounts.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
+            <button onClick={() => alert("CSV Export feature coming soon!")} className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export CSV
             </button>
@@ -126,17 +126,17 @@ export default function TransactionsPage() {
                       <td className="p-md">
                         <div className="flex items-center gap-sm">
                           <div className="hidden sm:flex w-10 h-10 rounded-full bg-surface-container-highest items-center justify-center shrink-0">
-                            <span className="material-symbols-outlined text-on-surface text-[20px]">{txn.category?.icon || 'receipt'}</span>
+                            <span className="material-symbols-outlined text-on-surface text-[20px]">receipt</span>
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="font-body-md text-body-md text-on-surface font-semibold truncate">{txn.merchant?.name || txn.description}</span>
+                            <span className="font-body-md text-body-md text-on-surface font-semibold truncate">{txn.merchant_name || txn.description}</span>
                             <span className="font-label-sm text-label-sm text-on-surface-variant truncate">{txn.provider}</span>
                           </div>
                         </div>
                       </td>
                       <td className="hidden sm:table-cell p-md">
                         <span className="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
-                          {txn.category?.name || 'Uncategorized'}
+                          {txn.category_name || 'Uncategorized'}
                         </span>
                       </td>
                       <td className="p-md font-body-md text-body-md text-right whitespace-nowrap">
@@ -187,9 +187,9 @@ export default function TransactionsPage() {
               <div className="flex-1 overflow-y-auto p-md flex flex-col gap-lg">
                 <div className="flex flex-col items-center text-center gap-sm py-md">
                   <div className="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center shadow-inner mb-sm">
-                    <span className="material-symbols-outlined text-on-surface text-[32px]">{selectedTxn.category?.icon || 'receipt'}</span>
+                    <span className="material-symbols-outlined text-on-surface text-[32px]">receipt</span>
                   </div>
-                  <h4 className="font-headline-lg text-headline-lg text-on-surface">{selectedTxn.merchant?.name || selectedTxn.description}</h4>
+                  <h4 className="font-headline-lg text-headline-lg text-on-surface">{selectedTxn.merchant_name || selectedTxn.description}</h4>
                   <div className="font-display-lg text-display-lg text-on-surface">₹{selectedTxn.amount.toLocaleString()}</div>
                   <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-md text-label-md mt-sm">
                     <span className="material-symbols-outlined text-[16px] mr-1">check_circle</span> {selectedTxn.status}
@@ -213,7 +213,7 @@ export default function TransactionsPage() {
                   </div>
                   <div className="flex flex-col gap-xs">
                     <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Category</span>
-                    <span className="font-body-md text-body-md text-on-surface">{selectedTxn.category?.name || 'Uncategorized'}</span>
+                    <span className="font-body-md text-body-md text-on-surface">{selectedTxn.category_name || 'Uncategorized'}</span>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FinGuard AI Copilot",
+  title: "SpendSense AI Copilot",
   description: "AI Financial Copilot",
 };
 

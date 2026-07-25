@@ -19,10 +19,26 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Optionally handle 401 refresh token logic here
-    if (error.response?.status === 401) {
-      useAuthStore.getState().clearAuth();
-      // Redirect to login if needed, or handle in component
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const { refreshToken, setAuth, clearAuth, user } = useAuthStore.getState();
+      
+      if (refreshToken) {
+        try {
+          const response = await axios.post('http://localhost:8000/api/v1/auth/refresh', { refresh_token: refreshToken });
+          const { access_token, refresh_token: new_refresh_token } = response.data;
+          
+          setAuth(access_token, new_refresh_token, user || undefined);
+          
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
+          return axios(originalRequest);
+        } catch (refreshError) {
+          clearAuth();
+        }
+      } else {
+        clearAuth();
+      }
     }
     return Promise.reject(error);
   }

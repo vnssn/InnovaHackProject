@@ -8,7 +8,7 @@ export default function AnalyticsPage() {
 
   const dashboard = overview?.dashboard;
   const topMerchants = overview?.top_merchants ?? [];
-  const categories = categoryData?.items ?? overview?.category_breakdown?.items ?? [];
+  const categories = categoryData?.items ?? (Array.isArray(overview?.category_breakdown) ? overview.category_breakdown : overview?.category_breakdown?.items) ?? [];
 
   return (
     <>
@@ -21,11 +21,11 @@ export default function AnalyticsPage() {
             <p className="font-body-md text-body-md text-on-surface-variant">Deep insights into your financial patterns and trends.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
+            <button onClick={() => alert("Filter options coming soon")} className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">calendar_today</span>
               Last 6 Months
             </button>
-            <button className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
+            <button onClick={() => alert("Report generation coming soon")} className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export Report
             </button>

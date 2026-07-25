@@ -3,8 +3,10 @@
 import { useDashboardAnalytics, useCategoryBreakdown, useTrends } from '@/hooks/useAnalytics';
 import { useInsights } from '@/hooks/useAI';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { data: dashboard, isLoading: isDashboardLoading } = useDashboardAnalytics();
   const { data: categoryData, isLoading: isCategoryLoading } = useCategoryBreakdown();
   const { data: trendsData, isLoading: isTrendsLoading } = useTrends('6m');
@@ -48,11 +50,11 @@ export default function DashboardPage() {
             <p className="font-body-md text-body-md text-on-surface-variant">Here is a summary of your financial activity.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
+            <button onClick={() => alert("Date filtering coming soon")} className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">calendar_today</span>
               Last 30 Days
             </button>
-            <button className="px-md py-sm bg-primary hover:bg-primary-fixed rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
+            <button onClick={() => router.push('/transactions')} className="px-md py-sm bg-primary hover:bg-primary-fixed rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">add</span>
               Add Transaction
             </button>

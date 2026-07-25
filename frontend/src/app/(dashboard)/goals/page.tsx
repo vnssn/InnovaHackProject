@@ -20,7 +20,7 @@ export default function GoalsPage() {
               Track your progress, adjust timelines, and stay motivated on your path to financial freedom.
             </p>
           </div>
-          <button className="flex items-center gap-sm bg-primary text-on-primary px-lg py-sm rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-dim transition-all group shrink-0">
+          <button onClick={() => alert("New goal setup coming soon!")} className="flex items-center gap-sm bg-primary text-on-primary px-lg py-sm rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-dim transition-all group shrink-0">
             <span className="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">add</span>
             <span className="font-label-md text-label-md font-semibold">New Goal</span>
           </button>

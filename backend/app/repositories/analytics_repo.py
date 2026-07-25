@@ -107,6 +107,9 @@ class AnalyticsRepository:
         }
 
     async def get_category_breakdown(self, user_id: uuid.UUID) -> list[dict]:
+        now = datetime.now(timezone.utc)
+        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
         result = await self.db.execute(
             select(
                 Category.id,
@@ -116,7 +119,10 @@ class AnalyticsRepository:
                 func.count(Transaction.id).label("txn_count"),
             )
             .join(Transaction, Transaction.category_id == Category.id, isouter=True)
-            .where(Transaction.user_id == user_id)
+            .where(
+                Transaction.user_id == user_id,
+                Transaction.transaction_date >= start_of_month,
+            )
             .group_by(Category.id, Category.name, Category.color)
             .order_by(text("total desc"))
         )
@@ -140,9 +146,14 @@ class AnalyticsRepository:
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=months * 30)
 
-        # SQLite-compatible: use strftime for grouping
+        dialect = self.db.bind.dialect.name if self.db.bind else "sqlite"
+        if dialect == "postgresql":
+            month_expr = func.to_char(Transaction.transaction_date, 'YYYY-MM')
+        else:
+            month_expr = func.strftime("%Y-%m", Transaction.transaction_date)
+
         query = select(
-            func.strftime("%Y-%m", Transaction.transaction_date).label("month"),
+            month_expr.label("month"),
             func.coalesce(func.sum(Transaction.amount), 0).label("total"),
         ).where(
             Transaction.user_id == user_id,

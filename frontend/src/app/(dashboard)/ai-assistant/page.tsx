@@ -94,6 +94,7 @@ export default function AiAssistantPage() {
     tip: 'lightbulb',
     prediction: 'online_prediction',
     savings: 'savings',
+    spending_pattern: 'monitoring',
   };
 
   return (

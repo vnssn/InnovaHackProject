@@ -1,11 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { clearAuth } = useAuthStore();
+
+  const handleLogout = () => {
+    clearAuth();
+    router.push('/login');
+  };
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: "dashboard" },
@@ -37,7 +45,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         <div className="flex items-center justify-between mb-xl px-base">
           <div className="flex items-center gap-base">
             <span className="material-symbols-outlined text-primary text-[32px]">account_balance</span>
-            <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">FinCore</span>
+            <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">SpendSense</span>
           </div>
           <button className="lg:hidden p-xs rounded-full hover:bg-surface-container text-on-surface" onClick={onClose}>
             <span className="material-symbols-outlined">close</span>
@@ -63,6 +71,15 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
           );
         })}
       </nav>
+      <div className="mt-auto pt-md border-t border-outline-variant/30">
+        <button
+          onClick={handleLogout}
+          className="flex items-center w-full gap-sm px-md py-sm rounded-xl transition-all text-on-surface-variant hover:bg-error/10 hover:text-error"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          <span className="text-label-md">Logout</span>
+        </button>
+      </div>
     </aside>
     </>
   );
