@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
+import { useAuthStore } from "@/store/authStore";
+import { logout } from "@/lib/api";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { clearAuth } = useAuthStore();
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: "dashboard" },
@@ -20,9 +24,14 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
     { name: "Financial Replay", path: "/financial-replay", icon: "history" },
   ];
 
+  const handleLogout = async () => {
+    await logout();
+    clearAuth();
+    router.push('/login');
+  };
+
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-40 lg:hidden"
@@ -63,6 +72,16 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
           );
         })}
       </nav>
+
+      <div className="pt-md border-t border-outline-variant/30 mt-md">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-sm px-md py-sm rounded-xl transition-all w-full text-on-surface-variant hover:bg-surface-container-high hover:text-error"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          <span className="text-label-md">Logout</span>
+        </button>
+      </div>
     </aside>
     </>
   );

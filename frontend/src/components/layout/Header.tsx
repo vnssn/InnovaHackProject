@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useNotifications } from "@/hooks/useNotifications";
-import { api } from "@/lib/api";
+import { logout } from "@/lib/api";
 
 export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const { user, clearAuth } = useAuthStore();
@@ -23,9 +23,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   const handleLogout = async () => {
-    try {
-      await api.post('/auth/logout');
-    } catch {}
+    await logout();
     clearAuth();
     router.push('/login');
   };
