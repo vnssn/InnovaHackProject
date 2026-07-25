@@ -1,0 +1,13 @@
+# Backend secrets
+backend/.env
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/.venv/
+backend/venv/
+
+# Frontend
+frontend/.next/
+frontend/node_modules/
+frontend/.env
+frontend/.env.local

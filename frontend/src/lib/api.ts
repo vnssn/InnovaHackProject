@@ -27,3 +27,23 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const login = async (email: string, password: string) => {
+  const response = await api.post('/auth/login', { email, password });
+  const { access_token, refresh_token } = response.data;
+  
+  // Set tokens temporarily to fetch user profile
+  useAuthStore.getState().setAuth(access_token, refresh_token);
+  
+  const userResponse = await api.get('/auth/me');
+  return {
+    access_token,
+    refresh_token,
+    user: userResponse.data
+  };
+};
+
+export const fetchUser = async () => {
+  const response = await api.get('/auth/me');
+  return response.data;
+};
