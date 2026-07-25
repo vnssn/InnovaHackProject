@@ -1,0 +1,396 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-primary":"#002e69","tertiary-fixed-dim":"#ffb3ad","tertiary-fixed":"#ffdad7","surface-bright":"#323949","primary-container":"#4b8eff","inverse-on-surface":"#293040","on-primary-container":"#00285c","tertiary-container":"#ff5451","outline-variant":"#414755","on-tertiary-container":"#5c0008","error":"#ffb4ab","surface":"#0c1322","on-tertiary-fixed":"#410004","on-error":"#690005","secondary-container":"#00a572","on-background":"#dce2f7","surface-container-lowest":"#070e1d","on-primary-fixed":"#001a41","on-surface-variant":"#c1c6d7","on-secondary-fixed-variant":"#005236","on-secondary":"#003824","tertiary":"#ffb3ad","background":"#0c1322","inverse-surface":"#dce2f7","inverse-primary":"#005bc1","secondary-fixed":"#6ffbbe","on-tertiary-fixed-variant":"#930013","surface-container":"#191f2f","primary-fixed-dim":"#adc6ff","outline":"#8b90a0","primary-fixed":"#d8e2ff","primary":"#adc6ff","surface-container-low":"#141b2b","surface-dim":"#0c1322","on-secondary-fixed":"#002113","surface-tint":"#adc6ff","on-secondary-container":"#00311f","on-primary-fixed-variant":"#004493","secondary":"#4edea3","surface-container-high":"#232a3a","surface-container-highest":"#2e3545","on-surface":"#dce2f7","error-container":"#93000a","on-error-container":"#ffdad6","secondary-fixed-dim":"#4edea3","on-tertiary":"#68000a","surface-variant":"#2e3545"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"sm":"12px","lg":"40px","container-max":"1440px","xs":"4px","base":"8px","md":"24px","gutter":"24px","xl":"64px"},"fontFamily":{"headline-lg-mobile":["Inter"],"display-lg":["Inter"],"body-md":["Inter"],"label-sm":["Inter"],"headline-lg":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"1.2","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"1.1","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],"label-sm":["12px",{"lineHeight":"1.2","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"1.2","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["14px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"500"}],"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low/60 backdrop-blur-xl border-r border-outline-variant/30 z-50 flex flex-col p-md"><div class="flex items-center gap-base mb-xl px-base"><img alt="Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLNPbn81_qZ9nEnQq8pfmI-3CHWkTtlODODgEQZ5xk9xwRgUNAEiXZLZZzI2v8bgECocn6AsOQIVGl6sdR4vGpNynJNRReOBbTsqsTfJA56ekkKNCfXlU6oaoQ72x9eWtMjacYJ-Ot4JY8xby_0IdF5kBa25ekhR1nIUiq6VZMyLXAGG4WHoYx2YPkHewjn_CASr9LrjDsgV1Q1vSqNwywsDv9GaryYMj-eINuVy7iwXPFW3Zfjc8gOjpZWdFSlHAxGnAzvpmTQDU"/><span class="font-headline-md text-headline-md tracking-tight text-on-surface">FinCore</span></div><nav class="flex-1 flex flex-col gap-xs overflow-y-auto" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="text-label-md">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded-xl transition-all group bg-primary-container text-on-primary-container font-semibold" data-path="transactions" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="text-label-md">Transactions</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">insights</span><span class="text-label-md">Analytics</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="merchants" href="#"><span class="material-symbols-outlined text-[20px]">store</span><span class="text-label-md">Merchants</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="subscriptions" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="text-label-md">Subscriptions</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="locations" href="#"><span class="material-symbols-outlined text-[20px]">location_on</span><span class="text-label-md">Locations</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="budgets" href="#"><span class="material-symbols-outlined text-[20px]">account_balance_wallet</span><span class="text-label-md">Budgets</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="goals" href="#"><span class="material-symbols-outlined text-[20px]">track_changes</span><span class="text-label-md">Goals</span></a><a class="flex items-center gap-sm px-md py-sm rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="ai-assistant" href="#"><span class="material-symbols-outlined text-[20px]">smart_toy</span><span class="text-label-md">AI Assistant</span></a></nav></aside><div class="pl-72 flex flex-col min-h-screen"><header class="sticky top-0 h-16 w-full bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 z-40 px-xl flex items-center justify-between"><div class="flex items-center gap-md flex-1 max-w-xl"><div class="relative w-full group"><span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] transition-colors group-focus-within:text-primary">search</span><input class="w-full bg-surface-container-highest/50 border-none rounded-full py-base pl-12 pr-md text-body-md focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Search transactions..." type="text"/></div></div><div class="flex items-center gap-md"><div class="relative p-base hover:bg-surface-container rounded-full cursor-pointer transition-colors group"><span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-tertiary rounded-full ring-2 ring-surface"></span></div><div class="flex items-center gap-sm pl-md border-l border-outline-variant/50 cursor-pointer group"><div class="flex flex-col items-end hidden lg:flex"><span class="text-label-md font-semibold text-on-surface">Arjun Singh</span><span class="text-label-sm text-on-surface-variant">Premium Member</span></div><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg transition-transform group-hover:scale-105"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div></div></div></header><main class="flex-1 p-xl"><div class="flex flex-col w-full h-full p-md gap-lg">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md z-20">
+<div class="flex flex-col gap-xs">
+<h1 class="font-display-lg text-display-lg text-on-surface">Transactions</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Review and manage your financial activity across all linked accounts.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                Export CSV
+            </button>
+<button class="bg-primary hover:bg-primary-fixed text-on-primary font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-md">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Manual Entry
+            </button>
+</div>
+</div>
+<!-- Filter & Analytics Row (Glassmorphism Bento Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md z-10">
+<!-- Filters Card -->
+<div class="col-span-1 lg:col-span-8 bg-surface-container/40 backdrop-blur-xl rounded-2xl p-md flex flex-col gap-md shadow-lg border border-outline-variant/10">
+<div class="flex justify-between items-center pb-sm border-b border-outline-variant/20">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">filter_alt</span> Filters
+                </h2>
+<button class="text-primary hover:text-primary-fixed font-label-sm text-label-sm uppercase tracking-wider transition-colors">Clear All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Date Range -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Date Range</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] z-10 pointer-events-none">calendar_month</span>
+<input class="w-full bg-surface-container-highest/60 text-on-surface font-body-md text-body-md pl-10 pr-sm py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer backdrop-blur-sm border border-outline-variant/20" placeholder="Select range..." readonly="" type="text" value="Oct 1, 2023 - Oct 31, 2023"/>
+</div>
+</div>
+<!-- Category -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Category</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] z-10 pointer-events-none">category</span>
+<select class="w-full bg-surface-container-highest/60 text-on-surface font-body-md text-body-md pl-10 pr-lg py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer backdrop-blur-sm border border-outline-variant/20">
+<option value="">All Categories</option>
+<option value="dining">Dining &amp; Food</option>
+<option value="shopping">Shopping</option>
+<option value="utilities">Utilities</option>
+<option value="entertainment">Entertainment</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+<!-- Provider -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Provider / Bank</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] z-10 pointer-events-none">account_balance</span>
+<select class="w-full bg-surface-container-highest/60 text-on-surface font-body-md text-body-md pl-10 pr-lg py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer backdrop-blur-sm border border-outline-variant/20">
+<option value="">All Accounts</option>
+<option value="hdfc">HDFC Checking</option>
+<option value="sbi">SBI Credit Card</option>
+<option value="icici">ICICI Savings</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+<!-- Amount Slider (Spans 2 cols on md) -->
+<div class="md:col-span-2 flex flex-col gap-sm pt-sm">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Amount Range</label>
+<span class="font-label-md text-label-md text-primary">₹0 - ₹50,000</span>
+</div>
+<!-- Custom Range Slider Track -->
+<div class="relative h-2 bg-surface-container-highest rounded-full w-full mt-2 group">
+<!-- Active Range -->
+<div class="absolute h-full bg-primary rounded-full" style="left: 0%; width: 45%;"></div>
+<!-- Thumbs -->
+<div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow cursor-grab group-active:cursor-grabbing hover:scale-125 transition-transform ring-2 ring-primary" style="left: 0%;"></div>
+<div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow cursor-grab group-active:cursor-grabbing hover:scale-125 transition-transform ring-2 ring-primary" style="left: 45%;"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mt-1">
+<span>Min</span>
+<span>Max</span>
+</div>
+</div>
+<!-- Search Input -->
+<div class="flex flex-col gap-xs pt-sm">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Keywords</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] z-10 pointer-events-none">search</span>
+<input class="w-full bg-surface-container-highest/60 text-on-surface font-body-md text-body-md pl-10 pr-sm py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all backdrop-blur-sm border border-outline-variant/20" placeholder="Search merchant..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Analytics Card -->
+<div class="col-span-1 lg:col-span-4 bg-gradient-to-br from-primary-container to-surface-container rounded-2xl p-md flex flex-col justify-between shadow-lg relative overflow-hidden group">
+<!-- Decorative Background Element -->
+<div class="absolute -right-8 -top-8 w-48 h-48 bg-primary/20 blur-3xl rounded-full mix-blend-screen pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
+<div class="z-10 flex flex-col gap-xs">
+<span class="font-label-md text-label-md text-on-primary-container/80 uppercase tracking-wider">Total Spend (Filtered)</span>
+<div class="font-display-lg text-display-lg text-on-primary-container flex items-baseline">
+<span class="text-headline-lg font-headline-lg mr-1 opacity-70">₹</span>
+                    1,24,500
+                    <span class="text-headline-md font-headline-md opacity-70">.00</span>
+</div>
+</div>
+<div class="z-10 mt-xl">
+<div class="flex justify-between items-end mb-sm">
+<span class="font-label-sm text-label-sm text-on-primary-container/80">Spend vs Last Period</span>
+<span class="font-label-md text-label-md text-secondary-container flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span> 12%
+                    </span>
+</div>
+<!-- Mini Sparkline (SVG) -->
+<div class="h-12 w-full">
+<svg class="w-full h-full overflow-visible preserve-3d" preserveaspectratio="none" viewbox="0 0 100 30">
+<!-- Glow effect -->
+<defs>
+<filter id="glow">
+<fegaussianblur result="coloredBlur" stddeviation="2"></fegaussianblur>
+<femerge>
+<femergenode in="coloredBlur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+<lineargradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="var(--tw-colors-secondary)" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="var(--tw-colors-secondary)" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,30 L0,20 Q10,25 20,15 T40,25 T60,10 T80,18 T100,5 L100,30 Z" fill="url(#areaGradient)"></path>
+<path class="text-secondary" d="M0,20 Q10,25 20,15 T40,25 T60,10 T80,18 T100,5" fill="none" filter="url(#glow)" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-low rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden relative z-0 border border-outline-variant/10">
+<!-- Table Scroll Area -->
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse" id="transaction-table">
+<thead class="sticky top-0 bg-surface-container/95 backdrop-blur-md z-10">
+<tr>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap">Txn ID</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap cursor-pointer hover:text-primary transition-colors group">
+                            Date <span class="material-symbols-outlined text-[14px] inline-block align-middle opacity-0 group-hover:opacity-100 transition-opacity">arrow_downward</span>
+</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Merchant / Details</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Category</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap cursor-pointer hover:text-primary transition-colors group text-right">
+                            Amount <span class="material-symbols-outlined text-[14px] inline-block align-middle opacity-0 group-hover:opacity-100 transition-opacity">swap_vert</span>
+</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer group" onclick="openDrawer('TXN-8472-A')">
+<td class="p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#TXN-8472-A</td>
+<td class="p-md font-body-md text-body-md text-on-surface whitespace-nowrap">Oct 24, 2023<br/><span class="text-label-sm font-label-sm text-on-surface-variant">14:32 IST</span></td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface text-[20px]">restaurant</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">Bombay Canteen</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">HDFC Credit Card •••• 4821</span>
+</div>
+</div>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
+                                Dining
+                            </span>
+</td>
+<td class="p-md font-body-md text-body-md text-right whitespace-nowrap">
+<span class="text-on-surface font-semibold">₹4,250<span class="text-sm opacity-60">.00</span></span>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm">Cleared</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer group" onclick="openDrawer('TXN-8471-B')">
+<td class="p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#TXN-8471-B</td>
+<td class="p-md font-body-md text-body-md text-on-surface whitespace-nowrap">Oct 23, 2023<br/><span class="text-label-sm font-label-sm text-on-surface-variant">09:15 IST</span></td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">Adani Electricity</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">SBI UPI via GPay</span>
+</div>
+</div>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
+                                Utilities
+                            </span>
+</td>
+<td class="p-md font-body-md text-body-md text-right whitespace-nowrap">
+<span class="text-on-surface font-semibold">₹1,840<span class="text-sm opacity-60">.50</span></span>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm">Cleared</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Pending/Income) -->
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer group" onclick="openDrawer('TXN-8470-C')">
+<td class="p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#TXN-8470-C</td>
+<td class="p-md font-body-md text-body-md text-on-surface whitespace-nowrap">Oct 22, 2023<br/><span class="text-label-sm font-label-sm text-on-surface-variant">16:45 IST</span></td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">Salary Credit - ACME Corp</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">ICICI Checking •••• 9920</span>
+</div>
+</div>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
+                                Income
+                            </span>
+</td>
+<td class="p-md font-body-md text-body-md text-right whitespace-nowrap">
+<span class="text-secondary font-semibold">+₹85,000<span class="text-sm opacity-60">.00</span></span>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[16px] animate-pulse">schedule</span>
+<span class="font-label-sm text-label-sm">Processing</span>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer group" onclick="openDrawer('TXN-8469-D')">
+<td class="p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#TXN-8469-D</td>
+<td class="p-md font-body-md text-body-md text-on-surface whitespace-nowrap">Oct 20, 2023<br/><span class="text-label-sm font-label-sm text-on-surface-variant">19:30 IST</span></td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface text-[20px]">shopping_bag</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">Myntra Designs</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">HDFC Credit Card •••• 4821</span>
+</div>
+</div>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
+                                Shopping
+                            </span>
+</td>
+<td class="p-md font-body-md text-body-md text-right whitespace-nowrap">
+<span class="text-on-surface font-semibold">₹3,499<span class="text-sm opacity-60">.00</span></span>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm">Cleared</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-md border-t border-outline-variant/20 bg-surface-container/50 backdrop-blur-sm flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Showing 1 to 10 of 248 entries</span>
+<div class="flex items-center gap-xs">
+<button class="w-8 h-8 rounded-full bg-surface-container-highest hover:bg-surface-variant flex items-center justify-center text-on-surface transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md font-bold">1</button>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container-highest flex items-center justify-center text-on-surface font-label-md text-label-md transition-colors">2</button>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container-highest flex items-center justify-center text-on-surface font-label-md text-label-md transition-colors">3</button>
+<span class="text-on-surface-variant mx-1">...</span>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container-highest flex items-center justify-center text-on-surface font-label-md text-label-md transition-colors">25</button>
+<button class="w-8 h-8 rounded-full bg-surface-container-highest hover:bg-surface-variant flex items-center justify-center text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Transaction Detail Drawer (Simulated Overlay) -->
+<div class="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" id="drawer-overlay" onclick="closeDrawer()">
+<div class="absolute right-0 top-0 h-full w-full max-w-md bg-surface-container border-l border-outline-variant/30 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col" id="drawer-panel" onclick="event.stopPropagation()">
+<!-- Drawer Header -->
+<div class="p-md border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-low/50 sticky top-0 backdrop-blur-md z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface">Transaction Details</h3>
+<button class="p-xs hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant hover:text-on-surface" onclick="closeDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto p-md flex flex-col gap-lg">
+<!-- Hero Info -->
+<div class="flex flex-col items-center text-center gap-sm py-md">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center shadow-inner mb-sm">
+<span class="material-symbols-outlined text-on-surface text-[32px]" id="drawer-icon">restaurant</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg text-on-surface" id="drawer-merchant">Bombay Canteen</h4>
+<div class="font-display-lg text-display-lg text-on-surface" id="drawer-amount">₹4,250<span class="text-headline-lg font-headline-lg opacity-60">.00</span></div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-md text-label-md mt-sm">
+<span class="material-symbols-outlined text-[16px] mr-1">check_circle</span> Cleared
+                    </span>
+</div>
+<hr class="border-outline-variant/20"/>
+<!-- Meta Data Grid -->
+<div class="grid grid-cols-2 gap-y-md gap-x-sm">
+<div class="flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Date &amp; Time</span>
+<span class="font-body-md text-body-md text-on-surface" id="drawer-datetime">Oct 24, 2023, 14:32</span>
+</div>
+<div class="flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Transaction ID</span>
+<span class="font-body-md text-body-md text-on-surface font-mono text-sm" id="drawer-id">#TXN-8472-A</span>
+</div>
+<div class="flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Payment Method</span>
+<span class="font-body-md text-body-md text-on-surface">HDFC Credit Card</span>
+</div>
+<div class="flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Category</span>
+<span class="font-body-md text-body-md text-on-surface">Dining &amp; Food</span>
+</div>
+</div>
+<!-- Location Map Placeholder -->
+<div class="flex flex-col gap-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Location</span>
+<div class="w-full h-40 bg-surface-container-highest rounded-xl border border-outline-variant/20 shadow-inner relative overflow-hidden" data-location="Bombay Canteen, Mumbai, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_GjSeqFLoOm2RcKWLty0ZN_nahmY8Pzu0Ptd7yVsOoTyX4wCzrraEhSwYLWIsthFaJsCAGoe9zJeQ_4TZU7vqCz1kGOlBTrOa7XF15n77FrrVJXYzs5PKJjxGEWb1PCsLfcsXO5a5afYMArbeht7KLA-00k_mkZ6HOTDQEMOXhgGq9Tv4HRpy8fBiQXJhO9WwfM8xuXo4GhB4doUX7crRGBgdvZV9wpzO9eNJjfoMZAKP2CeGnXARF_rQVCHhmaxNUI3RYhFdhY0')">
+<!-- Gradient Overlay for map text -->
+<div class="absolute bottom-0 left-0 w-full p-sm bg-gradient-to-t from-surface to-transparent">
+<span class="font-label-md text-label-md text-on-surface drop-shadow-md">Lower Parel, Mumbai</span>
+</div>
+</div>
+</div>
+<!-- Remarks / Notes -->
+<div class="flex flex-col gap-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Notes</span>
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant/10 text-on-surface font-body-md text-body-md italic opacity-80">
+                        Dinner with design team.
+                    </div>
+</div>
+<!-- Actions -->
+<div class="flex gap-sm mt-auto pt-lg">
+<button class="flex-1 bg-surface-container-highest hover:bg-surface-variant text-on-surface font-label-md text-label-md py-sm rounded-lg transition-colors border border-outline-variant/20">Report Issue</button>
+<button class="flex-1 bg-primary hover:bg-primary-fixed text-on-primary font-label-md text-label-md py-sm rounded-lg transition-colors shadow-md">Download Receipt</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    function openDrawer(txnId) {
+        const overlay = document.getElementById('drawer-overlay');
+        const panel = document.getElementById('drawer-panel');
+        
+        // Mock data population based on row click could go here
+        
+        overlay.classList.remove('hidden');
+        // Small delay to allow display block to apply before animating opacity
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0');
+            panel.classList.remove('translate-x-full');
+        }, 10);
+    }
+
+    function closeDrawer() {
+        const overlay = document.getElementById('drawer-overlay');
+        const panel = document.getElementById('drawer-panel');
+        
+        overlay.classList.add('opacity-0');
+        panel.classList.add('translate-x-full');
+        
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+        }, 300); // Matches transition duration
+    }
+</script></main></div></body></html>
