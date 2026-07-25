@@ -161,7 +161,7 @@ export default function TransactionsPage() {
 
         {selectedTxn && (
           <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-end" id="drawer-overlay" onClick={() => setSelectedTxnId(null)}>
-            <div className="h-full w-full max-w-md bg-surface-container border-l border-outline-variant/30 shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="h-full w-full max-w-[448px] bg-surface-container border-l border-outline-variant/30 shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
               <div className="p-md border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-low/50 sticky top-0 backdrop-blur-md z-10">
                 <h3 className="font-headline-md text-headline-md text-on-surface">Transaction Details</h3>
                 <button onClick={() => setSelectedTxnId(null)} className="p-xs hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant hover:text-on-surface" >

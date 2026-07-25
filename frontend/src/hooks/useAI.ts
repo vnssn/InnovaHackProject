@@ -29,3 +29,21 @@ export const useChat = () => {
     },
   });
 };
+
+export const useAIAnalyze = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/ai/analyze');
+      return response.data;
+    },
+  });
+};
+
+export const useAIPredict = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/ai/predict');
+      return response.data;
+    },
+  });
+};

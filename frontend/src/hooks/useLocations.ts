@@ -13,7 +13,13 @@ export const useLocationHeatmap = (month?: number, year?: number) => {
   });
 };
 
-export const useLocationClusters = (zoom_level = 10, north?: number, south?: number, east?: number, west?: number) => {
+export const useLocationClusters = (
+  zoom_level = 10,
+  north?: number,
+  south?: number,
+  east?: number,
+  west?: number
+) => {
   return useQuery({
     queryKey: ['locations', 'clusters', zoom_level, north, south, east, west],
     queryFn: async () => {
@@ -30,6 +36,18 @@ export const useLocationCities = () => {
     queryKey: ['locations', 'top-cities'],
     queryFn: async () => {
       const response = await api.get('/locations/top-cities');
+      return response.data;
+    },
+  });
+};
+
+export const useLocationLocalities = (city?: string) => {
+  return useQuery({
+    queryKey: ['locations', 'top-localities', city],
+    queryFn: async () => {
+      const response = await api.get('/locations/top-localities', {
+        params: { city },
+      });
       return response.data;
     },
   });

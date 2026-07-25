@@ -186,7 +186,7 @@ export default function AiAssistantPage() {
                     <span className="material-symbols-outlined text-primary text-[40px]">smart_toy</span>
                   </div>
                   <h3 className="font-headline-lg text-headline-lg text-on-surface">AI Financial Copilot</h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant max-w-md">
+                  <p className="font-body-md text-body-md text-on-surface-variant max-w-[448px]">
                     Ask me anything about your finances — spending patterns, budget advice, subscription leaks, and more.
                   </p>
                 </div>

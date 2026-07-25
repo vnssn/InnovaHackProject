@@ -72,7 +72,7 @@ export default function SubscriptionsPage() {
                 <span className="material-symbols-outlined text-tertiary text-[24px]">warning</span>
                 <h2 className="font-headline-lg text-headline-lg text-on-surface">Leak Report</h2>
               </div>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-md max-w-md">
+              <p className="font-body-md text-body-md text-on-surface-variant mb-md max-w-[448px]">
                 {leaks.unused?.length > 0 || leaks.duplicates?.length > 0
                   ? `We identified ${leaks.unused?.length ?? 0} unused and ${leaks.duplicates?.length ?? 0} duplicate services.`
                   : 'Your subscription health looks good. No major issues detected.'}
