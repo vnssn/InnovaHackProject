@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import { useBudgets } from '@/hooks/useBudgets';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { useBudgets, useCreateBudget } from '@/hooks/useBudgets';
+import { useCategoryBreakdown } from '@/hooks/useAnalytics';
+import { useCategories } from '@/hooks/useCategories';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CATEGORY_ICONS: Record<string, string> = {
   'dining': 'restaurant',
@@ -28,7 +29,28 @@ function getBudgetColor(pct: number) {
 export default function BudgetsPage() {
   const queryClient = useQueryClient();
   const { data: budgetsData, isLoading } = useBudgets();
+  const { data: categoryData } = useCategoryBreakdown();
+  const { data: allCategories } = useCategories();
+  const createBudget = useCreateBudget();
   const budgets = budgetsData?.items ?? [];
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [monthlyLimit, setMonthlyLimit] = useState('');
+  
+  const handleCreateBudget = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCategoryId || !monthlyLimit) return;
+    
+    await createBudget.mutateAsync({
+      category_id: selectedCategoryId,
+      monthly_limit: parseFloat(monthlyLimit),
+    });
+    
+    setIsModalOpen(false);
+    setSelectedCategoryId('');
+    setMonthlyLimit('');
+  };
 
   const totalLimit = budgets.reduce((acc: number, b: any) => acc + (b.monthly_limit ?? 0), 0);
   const totalSpent = budgets.reduce((acc: number, b: any) => acc + (b.spent ?? 0), 0);
@@ -61,7 +83,7 @@ export default function BudgetsPage() {
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               {currentMonth}
             </button>
-            <button onClick={() => alert("Add budget coming soon!")} className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
               <span className="material-symbols-outlined transition-transform group-hover:rotate-90">add</span>
             </button>
           </div>
@@ -184,6 +206,59 @@ export default function BudgetsPage() {
           </>
         )}
       </div>
+
+      {/* New Budget Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-surface-container w-full min-w-[320px] sm:w-[400px] max-w-md rounded-2xl p-6 shadow-2xl animate-fade-in-up">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Create New Budget</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateBudget} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Category</label>
+                <select 
+                  className="w-full bg-surface-container-highest p-3 rounded-xl outline-none text-on-surface border border-transparent focus:border-primary transition-colors"
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>Select a category</option>
+                  {allCategories?.items?.map((cat: any) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Monthly Limit (₹)</label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 5000"
+                  className="w-full bg-surface-container-highest p-3 rounded-xl outline-none text-on-surface border border-transparent focus:border-primary transition-colors"
+                  value={monthlyLimit}
+                  onChange={(e) => setMonthlyLimit(e.target.value)}
+                  required
+                  min="1"
+                />
+              </div>
+              
+              <div className="mt-4 flex gap-3">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 p-3 rounded-full bg-surface-container-highest text-on-surface hover:bg-surface-container-high transition-colors font-label-md">
+                  Cancel
+                </button>
+                <button type="submit" disabled={createBudget.isPending} className="flex-1 p-3 rounded-full bg-primary text-on-primary hover:bg-primary-fixed transition-colors font-label-md disabled:opacity-50 flex items-center justify-center gap-2">
+                  {createBudget.isPending ? 'Saving...' : 'Save Budget'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

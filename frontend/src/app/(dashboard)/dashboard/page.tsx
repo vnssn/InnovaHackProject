@@ -233,19 +233,27 @@ export default function DashboardPage() {
                 <h2 className="font-headline-md text-[18px] font-semibold text-on-surface">AI Insights</h2>
               </div>
               <div className="flex flex-col gap-sm">
-                {insightsData?.insights?.slice(0, 3).map((insight: any) => (
-                  <div key={insight.id} className="bg-surface p-sm rounded-lg flex items-start gap-sm group cursor-pointer hover:bg-surface-container-high transition-colors">
-                    <div className="mt-1">
-                      <span className="material-symbols-outlined text-tertiary-container text-[18px]">
-                        {insight.type === 'leak' ? 'receipt_long' : insight.type === 'alert' ? 'warning' : 'lightbulb'}
-                      </span>
+                {insightsData?.insights && insightsData.insights.length > 0 ? (
+                  insightsData.insights.slice(0, 3).map((insight: any) => (
+                    <div key={insight.id} className="bg-surface p-sm rounded-lg flex items-start gap-sm group cursor-pointer hover:bg-surface-container-high transition-colors">
+                      <div className="mt-1">
+                        <span className="material-symbols-outlined text-tertiary-container text-[18px]">
+                          {insight.type === 'leak' ? 'receipt_long' : insight.type === 'alert' ? 'warning' : 'lightbulb'}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-label-md text-label-md font-semibold text-on-surface group-hover:text-tertiary-container transition-colors">{insight.title}</span>
+                        <span className="font-body-md text-[13px] text-on-surface-variant leading-tight mt-1">{insight.description}</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-label-md text-label-md font-semibold text-on-surface group-hover:text-tertiary-container transition-colors">{insight.title}</span>
-                      <span className="font-body-md text-[13px] text-on-surface-variant leading-tight mt-1">{insight.description}</span>
-                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-md text-center bg-surface rounded-lg">
+                    <span className="material-symbols-outlined text-[32px] text-on-surface-variant mb-2">auto_awesome</span>
+                    <span className="font-label-md text-label-md text-on-surface-variant">No new insights right now.</span>
+                    <span className="font-body-md text-[12px] text-on-surface-variant mt-1">Keep spending and our AI will generate personalized tips.</span>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

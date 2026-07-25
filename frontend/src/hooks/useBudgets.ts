@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 export const useBudgets = (page = 1, size = 20) => {
@@ -21,5 +21,19 @@ export const useBudgetProgress = (id: string) => {
       return response.data;
     },
     enabled: !!id,
+  });
+};
+
+export const useCreateBudget = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { category_id: string; monthly_limit: number; month?: string }) => {
+      const response = await api.post('/budgets', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
+    },
   });
 };

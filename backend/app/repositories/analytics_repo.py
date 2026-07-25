@@ -164,4 +164,22 @@ class AnalyticsRepository:
         query = query.group_by(text("month")).order_by(text("month asc"))
 
         result = await self.db.execute(query)
-        return [{"period": r[0], "total": float(r[1]), "categories": {}} for r in result.all()]
+        db_rows = result.all()
+        db_data = {r[0]: float(r[1]) for r in db_rows}
+
+        # Generate all months in the period
+        now = datetime.now(timezone.utc)
+        trends = []
+        for i in range(months - 1, -1, -1):
+            target_month_num = now.month - i
+            target_year_num = now.year
+            
+            while target_month_num <= 0:
+                target_month_num += 12
+                target_year_num -= 1
+                
+            month_str = f"{target_year_num}-{target_month_num:02d}"
+            total = db_data.get(month_str, 0.0)
+            trends.append({"period": month_str, "total": total, "categories": {}})
+            
+        return trends

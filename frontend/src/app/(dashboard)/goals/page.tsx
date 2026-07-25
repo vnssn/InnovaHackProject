@@ -1,10 +1,33 @@
 "use client";
 
-import { useGoals } from '@/hooks/useGoals';
+import { useState } from 'react';
+import { useGoals, useCreateGoal } from '@/hooks/useGoals';
 
 export default function GoalsPage() {
   const { data: goalsData, isLoading } = useGoals();
+  const createGoal = useCreateGoal();
   const goals = goalsData?.items || [];
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [targetAmount, setTargetAmount] = useState('');
+  const [deadline, setDeadline] = useState('');
+
+  const handleCreateGoal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !targetAmount) return;
+
+    await createGoal.mutateAsync({
+      name,
+      target_amount: parseFloat(targetAmount),
+      deadline: deadline || undefined,
+    });
+
+    setIsModalOpen(false);
+    setName('');
+    setTargetAmount('');
+    setDeadline('');
+  };
 
   const totalTarget = goals.reduce((acc: number, goal: any) => acc + (goal.target_amount || 0), 0);
   const totalSaved = goals.reduce((acc: number, goal: any) => acc + (goal.current_amount || 0), 0);
@@ -20,7 +43,7 @@ export default function GoalsPage() {
               Track your progress, adjust timelines, and stay motivated on your path to financial freedom.
             </p>
           </div>
-          <button onClick={() => alert("New goal setup coming soon!")} className="flex items-center gap-sm bg-primary text-on-primary px-lg py-sm rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-dim transition-all group shrink-0">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-sm bg-primary text-on-primary px-lg py-sm rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-dim transition-all group shrink-0">
             <span className="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">add</span>
             <span className="font-label-md text-label-md font-semibold">New Goal</span>
           </button>
@@ -124,6 +147,66 @@ export default function GoalsPage() {
           )}
         </div>
       </div>
+
+      {/* New Goal Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-surface-container w-full min-w-[320px] sm:w-[400px] max-w-md rounded-2xl p-6 shadow-2xl animate-fade-in-up">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Create New Goal</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateGoal} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Goal Name</label>
+                <input 
+                  type="text"
+                  placeholder="e.g. New Car, Vacation"
+                  className="w-full bg-surface-container-highest p-3 rounded-xl outline-none text-on-surface border border-transparent focus:border-primary transition-colors"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Target Amount (₹)</label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 50000"
+                  className="w-full bg-surface-container-highest p-3 rounded-xl outline-none text-on-surface border border-transparent focus:border-primary transition-colors"
+                  value={targetAmount}
+                  onChange={(e) => setTargetAmount(e.target.value)}
+                  required
+                  min="1"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Deadline (Optional)</label>
+                <input 
+                  type="date"
+                  className="w-full bg-surface-container-highest p-3 rounded-xl outline-none text-on-surface border border-transparent focus:border-primary transition-colors"
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                />
+              </div>
+              
+              <div className="mt-4 flex gap-3">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 p-3 rounded-full bg-surface-container-highest text-on-surface hover:bg-surface-container-high transition-colors font-label-md">
+                  Cancel
+                </button>
+                <button type="submit" disabled={createGoal.isPending} className="flex-1 p-3 rounded-full bg-primary text-on-primary hover:bg-primary-fixed transition-colors font-label-md disabled:opacity-50 flex items-center justify-center gap-2">
+                  {createGoal.isPending ? 'Saving...' : 'Save Goal'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
