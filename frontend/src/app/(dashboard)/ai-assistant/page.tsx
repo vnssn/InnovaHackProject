@@ -103,7 +103,7 @@ export default function AiAssistantPage() {
         <div className="flex flex-1 overflow-hidden relative">
 
           {/* Sidebar: Insights & Coach */}
-          <aside className="hidden lg:flex flex-col w-80 bg-surface-container/30 backdrop-blur-md border-r border-outline-variant/30 overflow-y-auto p-md gap-md">
+          <aside className="hidden lg:flex flex-col shrink-0 w-80 bg-surface-container/30 backdrop-blur-md border-r border-outline-variant/30 overflow-y-auto p-md gap-md">
             <div className="flex items-center gap-sm mb-sm">
               <span className="material-symbols-outlined text-primary text-[24px]">psychology</span>
               <h2 className="font-headline-md text-headline-md text-on-surface">Insights Coach</h2>

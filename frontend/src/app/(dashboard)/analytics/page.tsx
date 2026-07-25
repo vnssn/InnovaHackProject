@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
         ) : (
           <>
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-md w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-md w-full">
 
               <div className="bg-surface-container rounded-xl p-md shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-28 h-28 bg-primary/5 rounded-full -mr-14 -mt-14 blur-2xl transition-transform group-hover:scale-110"></div>
@@ -95,9 +95,9 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Category Breakdown */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-md">
 
-              <div className="md:col-span-2 bg-surface-container rounded-xl p-md shadow-sm flex flex-col gap-md">
+              <div className="lg:col-span-2 bg-surface-container rounded-xl p-md shadow-sm flex flex-col gap-md">
                 <div>
                   <h2 className="font-headline-md text-headline-md text-on-surface">Spend by Category</h2>
                   <p className="font-label-sm text-label-sm text-on-surface-variant">Current month breakdown</p>
