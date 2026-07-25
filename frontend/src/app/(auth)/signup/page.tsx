@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login, googleLogin } from "@/lib/api";
+import { login, register, googleLogin } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { useGoogleLogin } from "@react-oauth/google";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("demo123");
+export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -20,11 +21,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data = await login(email, password);
+      const data = await register(name, email, password);
       setAuth(data.access_token, data.refresh_token, data.user);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Failed to login. Please check credentials.");
+      setError(err.response?.data?.detail || "Failed to sign up. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -39,7 +40,7 @@ export default function LoginPage() {
         setAuth(data.access_token, data.refresh_token, data.user);
         router.push("/dashboard");
       } catch (err: any) {
-        setError(err.response?.data?.detail || "Failed to login with Google.");
+        setError(err.response?.data?.detail || "Failed to sign up with Google.");
       } finally {
         setLoading(false);
       }
@@ -60,7 +61,7 @@ export default function LoginPage() {
           router.push("/dashboard");
         })
         .catch(err => {
-          setError(err.response?.data?.detail || "Failed to login with Google.");
+          setError(err.response?.data?.detail || "Failed to sign up with Google.");
         })
         .finally(() => {
           setLoading(false);
@@ -70,7 +71,6 @@ export default function LoginPage() {
     }
   };
 
-
   return (
     <div className="min-h-screen w-full grid place-items-center bg-surface p-4">
       <div className="max-w-[448px] w-full bg-surface-container rounded-2xl p-8 shadow-xl border border-outline-variant/20">
@@ -78,8 +78,8 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-primary text-3xl">account_balance_wallet</span>
           </div>
-          <h1 className="text-2xl font-bold text-on-surface">Welcome Back</h1>
-          <p className="text-on-surface-variant mt-2">Sign in to your FinGuard account</p>
+          <h1 className="text-2xl font-bold text-on-surface">Create an Account</h1>
+          <p className="text-on-surface-variant mt-2">Join FinGuard today</p>
         </div>
 
         {error && (
@@ -90,6 +90,18 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-on-surface mb-2">Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
+              placeholder="John Doe"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-on-surface mb-2">Email Address</label>
             <input
@@ -122,7 +134,7 @@ export default function LoginPage() {
             {loading ? (
               <span className="material-symbols-outlined animate-spin">progress_activity</span>
             ) : (
-              "Sign In"
+              "Sign Up"
             )}
           </button>
         </form>
@@ -151,9 +163,9 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-8 text-center text-sm text-on-surface-variant">
-          Don't have an account?{" "}
-          <button onClick={() => router.push("/signup")} className="font-medium text-primary hover:text-primary-fixed transition-colors">
-            Sign up
+          Already have an account?{" "}
+          <button onClick={() => router.push("/login")} className="font-medium text-primary hover:text-primary-fixed transition-colors">
+            Sign in
           </button>
         </p>
       </div>

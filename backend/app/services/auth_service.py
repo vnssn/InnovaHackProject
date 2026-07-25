@@ -65,6 +65,64 @@ class AuthService:
             ),
         )
 
+    async def google_login(self, token: str) -> TokenResponse:
+        email = None
+        name = "Google User"
+
+        if token.startswith("{"):
+            # Mock token processing
+            import json
+            try:
+                user_data = json.loads(token)
+                email = user_data.get("email")
+                name = user_data.get("name", "Google User")
+            except:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid mock google token")
+        else:
+            # Real token processing via Google UserInfo API
+            import httpx
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        "https://www.googleapis.com/oauth2/v3/userinfo",
+                        headers={"Authorization": f"Bearer {token}"}
+                    )
+                    if response.status_code == 200:
+                        user_info = response.json()
+                        email = user_info.get("email")
+                        name = user_info.get("name", "Google User")
+                    else:
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid google token")
+            except Exception as e:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+        if not email:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is required from Google Auth")
+
+        user = await self.user_repo.get_by_email(email)
+        if not user:
+            user = await self.user_repo.create(
+                email=email,
+                hashed_password=hash_password("google_oauth_mock_password"),
+                name=name,
+            )
+
+        access_token = create_access_token(str(user.id))
+        refresh_token = create_refresh_token(str(user.id))
+
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            user=UserOut(
+                id=str(user.id),
+                email=user.email,
+                name=user.name,
+                phone=user.phone,
+                avatar_url=user.avatar_url,
+                created_at=user.created_at,
+            ),
+        )
+
     async def refresh(self, refresh_token: str) -> TokenResponse:
         payload = decode_token(refresh_token)
         if payload is None or payload.get("type") != "refresh":

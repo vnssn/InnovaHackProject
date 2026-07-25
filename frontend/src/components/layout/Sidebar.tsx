@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -21,11 +21,28 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-72 bg-surface-container-low/60 backdrop-blur-xl border-r border-outline-variant/30 z-50 flex flex-col p-md">
-      <div className="flex items-center gap-base mb-xl px-base">
-        <span className="material-symbols-outlined text-primary text-[32px]">account_balance</span>
-        <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">FinCore</span>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      <aside className={clsx(
+        "fixed left-0 top-0 h-full w-72 bg-surface-container-low/95 backdrop-blur-xl border-r border-outline-variant/30 z-50 flex flex-col p-md transition-transform duration-300 ease-in-out lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="flex items-center justify-between mb-xl px-base">
+          <div className="flex items-center gap-base">
+            <span className="material-symbols-outlined text-primary text-[32px]">account_balance</span>
+            <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">FinCore</span>
+          </div>
+          <button className="lg:hidden p-xs rounded-full hover:bg-surface-container text-on-surface" onClick={onClose}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
       <nav className="flex-1 flex flex-col gap-xs overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
@@ -47,5 +64,6 @@ export default function Sidebar() {
         })}
       </nav>
     </aside>
+    </>
   );
 }

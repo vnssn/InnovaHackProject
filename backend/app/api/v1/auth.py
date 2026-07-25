@@ -6,6 +6,7 @@ from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,
+    GoogleLoginRequest,
     RefreshRequest,
     RegisterRequest,
     TokenResponse,
@@ -27,6 +28,12 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
 async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     return await service.login(body.email, body.password)
+
+
+@router.post("/google", response_model=TokenResponse)
+async def google_login(body: GoogleLoginRequest, db: AsyncSession = Depends(get_db)):
+    service = AuthService(db)
+    return await service.google_login(body.token)
 
 
 @router.post("/refresh", response_model=TokenResponse)

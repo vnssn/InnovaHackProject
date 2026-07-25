@@ -2,6 +2,14 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+class SubscriptionCreate(BaseModel):
+    amount: float
+    frequency: str = "monthly"
+    next_date: datetime | None = None
+    custom_name: str | None = None
+    category_id: str | None = None
+    status: str = "active"
+
 
 class SubscriptionOut(BaseModel):
     id: str

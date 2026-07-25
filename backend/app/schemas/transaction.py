@@ -7,6 +7,15 @@ class RecategorizeRequest(BaseModel):
     category_id: str
 
 
+class TransactionCreate(BaseModel):
+    amount: float
+    description: str | None = None
+    transaction_date: datetime
+    provider: str = "manual"
+    status: str = "completed"
+    category_id: str | None = None
+
+
 class TransactionOut(BaseModel):
     id: str
     merchant_id: str | None = None

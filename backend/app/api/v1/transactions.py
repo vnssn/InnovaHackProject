@@ -15,10 +15,31 @@ from app.schemas.transaction import (
     ReplayResponse,
     TimelineResponse,
     TransactionOut,
+    TransactionCreate,
 )
 from app.utils.pagination import paginate
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
+
+@router.post("", response_model=TransactionOut, status_code=201)
+async def create_transaction(
+    body: TransactionCreate,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    repo = TransactionRepository(db)
+    cat_id = uuid.UUID(body.category_id) if body.category_id else None
+    t = await repo.create(
+        user_id=user.id,
+        amount=body.amount,
+        description=body.description,
+        transaction_date=body.transaction_date,
+        provider=body.provider,
+        status=body.status,
+        category_id=cat_id,
+        reference_number=str(uuid.uuid4())[:8].upper()
+    )
+    return transaction_to_out(t)
 
 
 def transaction_to_out(t):

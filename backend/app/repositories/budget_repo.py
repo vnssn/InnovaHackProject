@@ -18,7 +18,7 @@ class BudgetRepository(BaseRepository[Budget]):
             select(func.coalesce(func.sum(Transaction.amount), 0)).where(
                 Transaction.user_id == user_id,
                 Transaction.category_id == category_id,
-                func.to_char(Transaction.transaction_date, "YYYY-MM") == month,
+                func.strftime("%Y-%m", Transaction.transaction_date) == month,
             )
         )
         return float(result.scalar() or 0)

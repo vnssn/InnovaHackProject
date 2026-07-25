@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useTransactions, TransactionFilters } from '@/hooks/useTransactions';
+import { useTransactions, useAddTransaction, TransactionFilters } from '@/hooks/useTransactions';
 
 export default function TransactionsPage() {
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -11,6 +11,21 @@ export default function TransactionsPage() {
   });
 
   const [selectedTxnId, setSelectedTxnId] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+
+  const addMutation = useAddTransaction();
+
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addMutation.mutateAsync({
+      amount: parseFloat(addForm.amount),
+      description: addForm.description,
+      transaction_date: new Date(addForm.transaction_date).toISOString(),
+    });
+    setIsAddModalOpen(false);
+    setAddForm({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+  };
 
   const { data: transactionsData, isLoading } = useTransactions(filters);
   const selectedTxn = transactionsData?.items?.find((t: any) => t.id === selectedTxnId);
@@ -29,7 +44,7 @@ export default function TransactionsPage() {
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export CSV
             </button>
-            <button className="bg-primary hover:bg-primary-fixed text-on-primary font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-md">
+            <button onClick={() => setIsAddModalOpen(true)} className="bg-primary hover:bg-primary-fixed text-on-primary font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-md">
               <span className="material-symbols-outlined text-[18px]">add</span>
               Manual Entry
             </button>
@@ -80,16 +95,16 @@ export default function TransactionsPage() {
             <table className="w-full text-left border-collapse" id="transaction-table">
               <thead className="sticky top-0 bg-surface-container/95 backdrop-blur-md z-10">
                 <tr>
-                  <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap">Txn ID</th>
+                  <th className="hidden md:table-cell p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap">Txn ID</th>
                   <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap cursor-pointer hover:text-primary transition-colors group">
                     Date
                   </th>
                   <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Merchant / Details</th>
-                  <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Category</th>
+                  <th className="hidden sm:table-cell p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Category</th>
                   <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold whitespace-nowrap cursor-pointer hover:text-primary transition-colors group text-right">
                     Amount
                   </th>
-                  <th className="p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Status</th>
+                  <th className="hidden md:table-cell p-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
@@ -104,13 +119,13 @@ export default function TransactionsPage() {
                       onClick={() => setSelectedTxnId(txn.id)}
                       className="hover:bg-surface-container/50 transition-colors cursor-pointer group"
                     >
-                      <td className="p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#{txn.reference_number || txn.id.substring(0,8)}</td>
+                      <td className="hidden md:table-cell p-md font-body-md text-body-md text-on-surface-variant font-mono text-sm whitespace-nowrap">#{txn.reference_number || txn.id.substring(0,8)}</td>
                       <td className="p-md font-body-md text-body-md text-on-surface whitespace-nowrap">
                         {new Date(txn.transaction_date).toLocaleDateString()}
                       </td>
                       <td className="p-md">
                         <div className="flex items-center gap-sm">
-                          <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+                          <div className="hidden sm:flex w-10 h-10 rounded-full bg-surface-container-highest items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-on-surface text-[20px]">{txn.category?.icon || 'receipt'}</span>
                           </div>
                           <div className="flex flex-col min-w-0">
@@ -119,7 +134,7 @@ export default function TransactionsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-md">
+                      <td className="hidden sm:table-cell p-md">
                         <span className="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm border border-outline-variant/20">
                           {txn.category?.name || 'Uncategorized'}
                         </span>
@@ -127,7 +142,7 @@ export default function TransactionsPage() {
                       <td className="p-md font-body-md text-body-md text-right whitespace-nowrap">
                         <span className="text-on-surface font-semibold">₹{txn.amount.toLocaleString()}</span>
                       </td>
-                      <td className="p-md">
+                      <td className="hidden md:table-cell p-md">
                         <div className="flex items-center gap-xs text-secondary">
                           <span className="material-symbols-outlined text-[16px]">check_circle</span>
                           <span className="font-label-sm text-label-sm">{txn.status}</span>
@@ -161,7 +176,7 @@ export default function TransactionsPage() {
 
         {selectedTxn && (
           <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-end" id="drawer-overlay" onClick={() => setSelectedTxnId(null)}>
-            <div className="h-full w-full max-w-md bg-surface-container border-l border-outline-variant/30 shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="h-full w-full max-w-[448px] bg-surface-container border-l border-outline-variant/30 shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
               <div className="p-md border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-low/50 sticky top-0 backdrop-blur-md z-10">
                 <h3 className="font-headline-md text-headline-md text-on-surface">Transaction Details</h3>
                 <button onClick={() => setSelectedTxnId(null)} className="p-xs hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant hover:text-on-surface" >
@@ -203,6 +218,46 @@ export default function TransactionsPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {isAddModalOpen && (
+          <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setIsAddModalOpen(false)}>
+            <form 
+              onSubmit={handleAddSubmit}
+              className="bg-surface-container rounded-2xl w-full max-w-[448px] p-lg flex flex-col gap-md shadow-2xl border border-outline-variant/30" 
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-sm">
+                <h3 className="font-headline-md text-headline-md text-on-surface">Add Transaction</h3>
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Amount (₹)</label>
+                <input required type="number" step="0.01" value={addForm.amount} onChange={e => setAddForm({...addForm, amount: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="0.00" />
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Description / Merchant</label>
+                <input required type="text" value={addForm.description} onChange={e => setAddForm({...addForm, description: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Groceries" />
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Date</label>
+                <input required type="datetime-local" value={addForm.transaction_date} onChange={e => setAddForm({...addForm, transaction_date: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={addMutation.isPending}
+                className="mt-sm bg-primary text-on-primary py-sm rounded-xl font-label-md hover:bg-primary-fixed transition-colors disabled:opacity-50"
+              >
+                {addMutation.isPending ? 'Saving...' : 'Save Transaction'}
+              </button>
+            </form>
           </div>
         )}
       </div>

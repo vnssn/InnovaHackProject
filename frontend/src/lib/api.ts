@@ -30,16 +30,31 @@ api.interceptors.response.use(
 
 export const login = async (email: string, password: string) => {
   const response = await api.post('/auth/login', { email, password });
-  const { access_token, refresh_token } = response.data;
-  
-  // Set tokens temporarily to fetch user profile
-  useAuthStore.getState().setAuth(access_token, refresh_token);
-  
-  const userResponse = await api.get('/auth/me');
+  const { access_token, refresh_token, user } = response.data;
   return {
     access_token,
     refresh_token,
-    user: userResponse.data
+    user
+  };
+};
+
+export const register = async (name: string, email: string, password: string) => {
+  const response = await api.post('/auth/register', { name, email, password });
+  const { access_token, refresh_token, user } = response.data;
+  return {
+    access_token,
+    refresh_token,
+    user
+  };
+};
+
+export const googleLogin = async (idToken: string) => {
+  const response = await api.post('/auth/google', { token: idToken });
+  const { access_token, refresh_token, user } = response.data;
+  return {
+    access_token,
+    refresh_token,
+    user
   };
 };
 

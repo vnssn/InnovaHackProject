@@ -14,13 +14,35 @@ from app.schemas.subscription import (
     SubscriptionLeakReport,
     SubscriptionOut,
     SubscriptionUpdate,
+    SubscriptionCreate,
 )
 from app.utils.pagination import paginate
 
 router = APIRouter(prefix="/subscriptions", tags=["Subscriptions"])
 
+@router.post("", response_model=SubscriptionOut, status_code=201)
+async def create_subscription(
+    body: SubscriptionCreate,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    repo = SubscriptionRepository(db)
+    cat_id = uuid.UUID(body.category_id) if body.category_id else None
+    s = await repo.create(
+        user_id=user.id,
+        amount=body.amount,
+        frequency=body.frequency,
+        next_date=body.next_date,
+        status=body.status,
+        category_id=cat_id,
+        notes=body.custom_name,  # store custom_name in notes field
+    )
+    return sub_to_out(s)
+
 
 def sub_to_out(s):
+    # When no linked merchant, fall back to notes (custom_name) for display
+    merchant_name = s.merchant.name if s.merchant else s.notes
     return SubscriptionOut(
         id=str(s.id),
         merchant_id=str(s.merchant_id) if s.merchant_id else None,
@@ -31,7 +53,7 @@ def sub_to_out(s):
         status=s.status,
         notes=s.notes,
         created_at=s.created_at,
-        merchant_name=s.merchant.name if s.merchant else None,
+        merchant_name=merchant_name,
         category_name=s.category.name if s.category else None,
     )
 
@@ -64,10 +86,12 @@ async def update_subscription(
     if not sub or sub.user_id != user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subscription not found")
 
+    # Merge custom_name into notes if provided
+    notes = body.notes if body.notes is not None else body.custom_name
     updated = await repo.update(
         uuid.UUID(id),
         status=body.status,
-        notes=body.notes,
+        notes=notes,
     )
     return sub_to_out(updated)
 
@@ -91,7 +115,44 @@ async def detect_subscriptions(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    return DetectResponse(subscriptions=[], detected_count=0)
+    from app.repositories.transaction_repo import TransactionRepository
+    from collections import defaultdict
+    from datetime import timedelta
+
+    txn_repo = TransactionRepository(db)
+    sub_repo = SubscriptionRepository(db)
+    
+    recent_txns, _ = await txn_repo.list_filtered(user.id, page=1, size=500)
+    
+    merchant_amounts = defaultdict(list)
+    for txn in recent_txns:
+        if txn.merchant_id:
+            merchant_amounts[(txn.merchant_id, txn.amount)].append(txn)
+            
+    detected = 0
+    for (m_id, amt), txns in merchant_amounts.items():
+        if len(txns) >= 2:
+            txns = sorted(txns, key=lambda t: t.transaction_date)
+            diffs = [(txns[i].transaction_date - txns[i-1].transaction_date).days for i in range(1, len(txns))]
+            if all(25 <= d <= 35 for d in diffs):
+                existing, _ = await sub_repo.list(page=1, size=1, user_id=user.id, merchant_id=m_id)
+                if not existing:
+                    next_date = txns[-1].transaction_date + timedelta(days=30)
+                    # convert next_date to timezone-aware if needed, but assuming model handles it
+                    await sub_repo.create(
+                        user_id=user.id,
+                        merchant_id=m_id,
+                        category_id=txns[-1].category_id,
+                        amount=amt,
+                        frequency="monthly",
+                        next_date=next_date,
+                        status="active"
+                    )
+                    detected += 1
+                    
+    items, _ = await sub_repo.list(page=1, size=100, user_id=user.id)
+    out_items = [sub_to_out(s) for s in items]
+    return DetectResponse(subscriptions=out_items, detected_count=detected)
 
 
 @router.get("/leaks", response_model=SubscriptionLeakReport)
@@ -99,11 +160,36 @@ async def get_subscription_leaks(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    sub_repo = SubscriptionRepository(db)
+    items, _ = await sub_repo.list(page=1, size=100, user_id=user.id, status="active")
+    
+    duplicates: list = []
+    unused: list = []
+    potential_savings = 0.0
+    recommendations = []
+    
+    seen_merchants = set()
+    for sub in items:
+        if sub.merchant_id in seen_merchants:
+            merchant_name = sub.merchant.name if sub.merchant else (sub.notes or "Unknown")
+            duplicates.append(sub_to_out(sub))
+            potential_savings += sub.amount
+            recommendations.append(f"Cancel duplicate subscription for {merchant_name}.")
+        elif sub.merchant_id:
+            seen_merchants.add(sub.merchant_id)
+            
+    leak_score = 0.0
+    if items:
+        leak_score = min(1.0, (len(duplicates) + len(unused)) / max(1, len(items)))
+        
+    if not recommendations:
+        recommendations.append("Your subscription health looks good. No major issues detected.")
+            
     return SubscriptionLeakReport(
-        leak_score=0.0,
-        potential_savings=0.0,
-        unused=[],
-        duplicates=[],
+        leak_score=leak_score,
+        potential_savings=potential_savings,
+        unused=unused,
+        duplicates=duplicates,
         price_increases=[],
-        recommendations=["Connect OpenAI API to get subscription leak analysis."],
+        recommendations=recommendations,
     )

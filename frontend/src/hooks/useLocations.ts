@@ -34,3 +34,16 @@ export const useLocationCities = () => {
     },
   });
 };
+
+export const useLocationLocalities = (city?: string) => {
+  return useQuery({
+    queryKey: ['locations', 'top-localities', city],
+    queryFn: async () => {
+      const response = await api.get('/locations/top-localities', {
+        params: { city },
+      });
+      return response.data;
+    },
+  });
+};
+

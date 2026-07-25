@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -18,6 +19,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "mock_client_id";
+
   return (
     <html
       lang="en"
@@ -29,10 +32,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col">
-        <Providers>
-          {children}
-        </Providers>
+      <body className="min-h-screen w-full">
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <Providers>
+            {children}
+          </Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

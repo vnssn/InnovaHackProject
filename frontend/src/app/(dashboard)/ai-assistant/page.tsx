@@ -173,20 +173,15 @@ export default function AiAssistantPage() {
           {/* Chat Main */}
           <main className="flex-1 flex flex-col relative bg-surface">
 
-            <div className="absolute inset-0 pointer-events-none overflow-hidden flex justify-center items-center opacity-20">
-              <div className="w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] mix-blend-screen absolute -top-40 -right-40"></div>
-              <div className="w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[100px] mix-blend-screen absolute -bottom-20 -left-20"></div>
-            </div>
-
             <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-md md:p-xl flex flex-col gap-lg z-10 scroll-smooth" id="chat-container">
 
               {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center flex-1 gap-md text-center py-xl">
+                <div className="flex flex-col items-center justify-center h-full w-full gap-md text-center py-xl">
                   <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-sm">
                     <span className="material-symbols-outlined text-primary text-[40px]">smart_toy</span>
                   </div>
-                  <h3 className="font-headline-lg text-headline-lg text-on-surface">AI Financial Copilot</h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant max-w-md">
+                  <h3 className="font-headline-lg text-headline-lg text-on-surface whitespace-nowrap">AI Financial Copilot</h3>
+                  <p className="font-body-md text-body-md text-on-surface-variant max-w-[448px] mx-auto">
                     Ask me anything about your finances — spending patterns, budget advice, subscription leaks, and more.
                   </p>
                 </div>

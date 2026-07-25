@@ -50,7 +50,7 @@ class MerchantRepository(BaseRepository[Merchant]):
 
         trend_result = await self.db.execute(
             select(
-                func.date_trunc("month", Transaction.transaction_date).label("month"),
+                func.strftime("%Y-%m", Transaction.transaction_date).label("month"),
                 func.sum(Transaction.amount).label("total"),
             )
             .where(Transaction.merchant_id == merchant_id, Transaction.user_id == user_id)
@@ -59,7 +59,7 @@ class MerchantRepository(BaseRepository[Merchant]):
             .limit(12)
         )
         monthly_trend = [
-            {"month": row[0].strftime("%Y-%m") if row[0] else "", "total": float(row[1] or 0)}
+            {"month": row[0] or "", "total": float(row[1] or 0)}
             for row in trend_result.all()
         ]
 

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -86,9 +86,17 @@ class TransactionRepository(BaseRepository[Transaction]):
     async def get_timeline(
         self, user_id: uuid.UUID, group_by: str, start_date: datetime | None, end_date: datetime | None
     ) -> list[dict]:
-        date_trunc = {"daily": "day", "weekly": "week", "monthly": "month", "yearly": "year"}.get(group_by, "day")
+        # SQLite compatible grouping using strftime
+        fmt_map = {
+            "daily": "%Y-%m-%d",
+            "weekly": "%Y-%W",
+            "monthly": "%Y-%m",
+            "yearly": "%Y",
+        }
+        fmt = fmt_map.get(group_by, "%Y-%m-%d")
+
         query = select(
-            func.date_trunc(date_trunc, Transaction.transaction_date).label("period"),
+            func.strftime(fmt, Transaction.transaction_date).label("period"),
             func.sum(Transaction.amount).label("total"),
             func.count(Transaction.id).label("count"),
         ).where(Transaction.user_id == user_id)
@@ -104,19 +112,19 @@ class TransactionRepository(BaseRepository[Transaction]):
 
         periods = []
         for row in rows:
-            period_dt = row[0]
+            period_str = row[0]
             txn_result = await self.db.execute(
                 select(Transaction)
                 .options(joinedload(Transaction.merchant), joinedload(Transaction.category))
                 .where(
                     Transaction.user_id == user_id,
-                    func.date_trunc(date_trunc, Transaction.transaction_date) == period_dt,
+                    func.strftime(fmt, Transaction.transaction_date) == period_str,
                 )
                 .order_by(Transaction.transaction_date.desc())
             )
             txns = list(txn_result.unique().scalars().all())
             periods.append({
-                "period": period_dt.isoformat() if period_dt else "",
+                "period": period_str,
                 "total": float(row[1] or 0),
                 "count": row[2],
                 "transactions": txns,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useSubscriptions, useSubscriptionLeaks } from '@/hooks/useSubscriptions';
+import { useState } from 'react';
+import { useSubscriptions, useSubscriptionLeaks, useAddSubscription } from '@/hooks/useSubscriptions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
@@ -8,6 +9,22 @@ export default function SubscriptionsPage() {
   const queryClient = useQueryClient();
   const { data: subsData, isLoading } = useSubscriptions('active');
   const { data: leaksData } = useSubscriptionLeaks();
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ amount: '', custom_name: '', next_date: new Date().toISOString().slice(0, 16) });
+
+  const addMutation = useAddSubscription();
+
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addMutation.mutateAsync({
+      amount: parseFloat(addForm.amount),
+      custom_name: addForm.custom_name,
+      next_date: new Date(addForm.next_date).toISOString(),
+    });
+    setIsAddModalOpen(false);
+    setAddForm({ amount: '', custom_name: '', next_date: new Date().toISOString().slice(0, 16) });
+  };
 
   const detectMutation = useMutation({
     mutationFn: () => api.post('/subscriptions/detect'),
@@ -37,7 +54,7 @@ export default function SubscriptionsPage() {
               <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
               {detectMutation.isPending ? 'Detecting...' : 'Detect AI'}
             </button>
-            <button className="bg-primary text-on-primary font-label-md text-label-md py-sm px-md rounded-xl flex items-center gap-xs hover:bg-primary-fixed transition-colors shadow-lg shadow-primary/20">
+            <button onClick={() => setIsAddModalOpen(true)} className="bg-primary text-on-primary font-label-md text-label-md py-sm px-md rounded-xl flex items-center gap-xs hover:bg-primary-fixed transition-colors shadow-lg shadow-primary/20">
               <span className="material-symbols-outlined text-[18px]">add</span>
               Add Subscription
             </button>
@@ -57,12 +74,12 @@ export default function SubscriptionsPage() {
                   className="text-tertiary drop-shadow-[0_0_10px_rgba(255,179,173,0.5)] transition-all duration-1000 ease-out"
                   cx="50" cy="50" fill="none" r="45" stroke="currentColor"
                   strokeDasharray="283"
-                  strokeDashoffset={283 * (1 - Math.min((leaks.leak_score ?? 0.72), 1))}
+                  strokeDashoffset={283 * (1 - Math.min((leaks.leak_score ?? 0), 1))}
                   strokeLinecap="round" strokeWidth="8"
                 ></circle>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-display-lg text-headline-lg text-on-surface">{Math.round((leaks.leak_score ?? 0.72) * 100)}</span>
+                <span className="font-display-lg text-headline-lg text-on-surface">{Math.round((leaks.leak_score ?? 0) * 100)}</span>
                 <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Score</span>
               </div>
             </div>
@@ -72,7 +89,7 @@ export default function SubscriptionsPage() {
                 <span className="material-symbols-outlined text-tertiary text-[24px]">warning</span>
                 <h2 className="font-headline-lg text-headline-lg text-on-surface">Leak Report</h2>
               </div>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-md max-w-md">
+              <p className="font-body-md text-body-md text-on-surface-variant mb-md max-w-[448px]">
                 {leaks.unused?.length > 0 || leaks.duplicates?.length > 0
                   ? `We identified ${leaks.unused?.length ?? 0} unused and ${leaks.duplicates?.length ?? 0} duplicate services.`
                   : 'Your subscription health looks good. No major issues detected.'}
@@ -159,7 +176,7 @@ export default function SubscriptionsPage() {
                 </div>
               )}
 
-              <button className="bg-surface-container/50 border-2 border-dashed border-outline-variant/30 rounded-2xl p-md flex flex-col items-center justify-center group hover:bg-surface-container hover:border-primary/50 transition-all min-h-[200px]">
+              <button onClick={() => setIsAddModalOpen(true)} className="bg-surface-container/50 border-2 border-dashed border-outline-variant/30 rounded-2xl p-md flex flex-col items-center justify-center group hover:bg-surface-container hover:border-primary/50 transition-all min-h-[200px]">
                 <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-md group-hover:scale-110 transition-transform group-hover:bg-primary/20 group-hover:text-primary text-on-surface-variant">
                   <span className="material-symbols-outlined text-[32px]">add</span>
                 </div>
@@ -169,6 +186,46 @@ export default function SubscriptionsPage() {
             </div>
           )}
         </div>
+
+        {isAddModalOpen && (
+          <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setIsAddModalOpen(false)}>
+            <form 
+              onSubmit={handleAddSubmit}
+              className="bg-surface-container rounded-2xl w-full max-w-[448px] p-lg flex flex-col gap-md shadow-2xl border border-outline-variant/30" 
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-sm">
+                <h3 className="font-headline-md text-headline-md text-on-surface">Add Subscription</h3>
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Service Name</label>
+                <input required type="text" value={addForm.custom_name} onChange={e => setAddForm({...addForm, custom_name: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Netflix" />
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Amount (₹)</label>
+                <input required type="number" step="0.01" value={addForm.amount} onChange={e => setAddForm({...addForm, amount: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="0.00" />
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface">Next Billing Date</label>
+                <input required type="datetime-local" value={addForm.next_date} onChange={e => setAddForm({...addForm, next_date: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={addMutation.isPending}
+                className="mt-sm bg-primary text-on-primary py-sm rounded-xl font-label-md hover:bg-primary-fixed transition-colors disabled:opacity-50"
+              >
+                {addMutation.isPending ? 'Saving...' : 'Save Subscription'}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );
