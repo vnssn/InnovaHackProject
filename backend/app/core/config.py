@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
 
 
@@ -13,7 +15,15 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI Financial Copilot"
     DEBUG: bool = True
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {
+        "env_file": str(Path(__file__).resolve().parents[2] / ".env"),
+        "env_file_encoding": "utf-8",
+    }
 
 
 settings = Settings()
+
+if settings.DATABASE_URL.startswith("sqlite+aiosqlite:///./"):
+    sqlite_relative_path = settings.DATABASE_URL.removeprefix("sqlite+aiosqlite:///./")
+    sqlite_path = (Path(__file__).resolve().parents[2] / sqlite_relative_path).resolve()
+    settings.DATABASE_URL = f"sqlite+aiosqlite:///{sqlite_path.as_posix()}"

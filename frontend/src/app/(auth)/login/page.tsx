@@ -6,10 +6,12 @@ import { login, register } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<'login' | 'register'>('login');
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("demo123");
-  const [name, setName] = useState("");
+  const [tab, setTab] = useState<"login" | "register">("login");
+  const [loginEmail, setLoginEmail] = useState("example@gmail.com");
+  const [loginPassword, setLoginPassword] = useState("password123");
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -20,7 +22,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const data = await login(email, password);
+      const data = await login(loginEmail, loginPassword);
       setAuth(data.access_token, data.refresh_token, data.user);
       router.push("/dashboard");
     } catch (err: any) {
@@ -35,10 +37,15 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      await register(email, password, name);
-      // Auto-login after register
-      const data = await login(email, password);
-      setAuth(data.access_token, data.refresh_token, data.user);
+      const response = await register(registerEmail, registerPassword, registerName);
+
+      if (response?.access_token && response?.refresh_token && response?.user) {
+        setAuth(response.access_token, response.refresh_token, response.user);
+      } else {
+        const data = await login(registerEmail, registerPassword);
+        setAuth(data.access_token, data.refresh_token, data.user);
+      }
+
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Registration failed. Please try again.");
@@ -48,8 +55,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface p-4" style={{ width: '100%', flex: 1 }}>
-      <div className="bg-surface-container rounded-2xl p-8 shadow-xl border border-outline-variant/20" style={{ width: '100%', maxWidth: '448px' }}>
+    <div className="min-h-screen flex items-center justify-center bg-surface p-4" style={{ width: "100%", flex: 1 }}>
+      <div className="bg-surface-container rounded-2xl p-8 shadow-xl border border-outline-variant/20" style={{ width: "100%", maxWidth: "448px" }}>
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-primary text-3xl">account_balance_wallet</span>
@@ -58,16 +65,27 @@ export default function LoginPage() {
           <p className="text-on-surface-variant mt-2">Your AI-powered financial companion</p>
         </div>
 
-        {/* Tabs */}
         <div className="flex mb-6 bg-surface-container-highest rounded-xl p-1">
           <button
-            onClick={() => { setTab('login'); setError(''); }}
-            className={`flex-1 py-2 rounded-lg font-label-md text-label-md transition-colors ${tab === 'login' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
-          >Sign In</button>
+            type="button"
+            onClick={() => {
+              setTab("login");
+              setError("");
+            }}
+            className={`flex-1 py-2 rounded-lg font-label-md text-label-md transition-colors ${tab === "login" ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}
+          >
+            Sign In
+          </button>
           <button
-            onClick={() => { setTab('register'); setError(''); }}
-            className={`flex-1 py-2 rounded-lg font-label-md text-label-md transition-colors ${tab === 'register' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
-          >Create Account</button>
+            type="button"
+            onClick={() => {
+              setTab("register");
+              setError("");
+            }}
+            className={`flex-1 py-2 rounded-lg font-label-md text-label-md transition-colors ${tab === "register" ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface"}`}
+          >
+            Create Account
+          </button>
         </div>
 
         {error && (
@@ -77,14 +95,14 @@ export default function LoginPage() {
           </div>
         )}
 
-        {tab === 'login' ? (
+        {tab === "login" ? (
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-on-surface mb-2">Email Address</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
                 required
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
                 placeholder="you@example.com"
@@ -94,8 +112,8 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-on-surface mb-2">Password</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
                 required
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
                 placeholder="••••••••"
@@ -115,8 +133,8 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-on-surface mb-2">Full Name</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={registerName}
+                onChange={(e) => setRegisterName(e.target.value)}
                 required
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
                 placeholder="John Doe"
@@ -126,8 +144,8 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-on-surface mb-2">Email Address</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={registerEmail}
+                onChange={(e) => setRegisterEmail(e.target.value)}
                 required
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
                 placeholder="you@example.com"
@@ -137,8 +155,8 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-on-surface mb-2">Password</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={registerPassword}
+                onChange={(e) => setRegisterPassword(e.target.value)}
                 required
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all"
                 placeholder="••••••••"
