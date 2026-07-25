@@ -77,91 +77,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Dashboard Preview */}
-      <section className="w-full px-6 lg:px-12 pb-32 relative z-20 flex justify-center">
-        <div className="w-full max-w-6xl rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col md:flex-row animate-floating">
-          
-          {/* Mockup Sidebar */}
-          <div className="hidden md:flex w-64 bg-black/40 border-r border-white/10 flex-col p-6 gap-6">
-            <div className="flex items-center gap-3 opacity-50 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-white/20"></div>
-              <div className="h-4 w-24 bg-white/20 rounded"></div>
-            </div>
-            {[1,2,3,4,5].map((i) => (
-              <div key={i} className="flex items-center gap-3 opacity-60">
-                <div className="w-5 h-5 rounded bg-white/20"></div>
-                <div className="h-3 w-full bg-white/10 rounded"></div>
-              </div>
-            ))}
-            <div className="mt-auto flex items-center gap-3 opacity-40">
-              <div className="w-8 h-8 rounded-full bg-white/20"></div>
-              <div className="h-3 w-20 bg-white/10 rounded"></div>
-            </div>
-          </div>
-
-          {/* Mockup Main Area */}
-          <div className="flex-1 p-6 md:p-10 bg-gradient-to-br from-white/5 to-transparent flex flex-col gap-8">
-            <div className="flex justify-between items-center opacity-80">
-              <div className="h-6 w-48 bg-white/20 rounded"></div>
-              <div className="h-10 w-10 bg-white/10 rounded-full"></div>
-            </div>
-            
-            {/* Top Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="h-32 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col justify-between relative overflow-hidden">
-                <div className="h-3 w-24 bg-white/20 rounded"></div>
-                <div className="h-8 w-32 bg-white/40 rounded"></div>
-                <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/20 blur-xl rounded-full"></div>
-              </div>
-              <div className="h-32 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col justify-between relative overflow-hidden">
-                <div className="h-3 w-24 bg-white/20 rounded"></div>
-                <div className="h-8 w-32 bg-white/40 rounded"></div>
-                <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-cyan-400/20 blur-xl rounded-full"></div>
-              </div>
-              <div className="h-32 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col justify-between relative overflow-hidden">
-                <div className="h-3 w-24 bg-white/20 rounded"></div>
-                <div className="h-8 w-32 bg-white/40 rounded"></div>
-              </div>
-            </div>
-
-            {/* Charts & Tables */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 h-64 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col gap-4">
-                <div className="h-4 w-32 bg-white/20 rounded"></div>
-                <div className="flex-1 flex items-end gap-2 px-2 opacity-50">
-                   {/* Mock bar chart */}
-                   <div className="w-full bg-blue-500/40 rounded-t h-[40%]"></div>
-                   <div className="w-full bg-blue-500/60 rounded-t h-[60%]"></div>
-                   <div className="w-full bg-blue-500/30 rounded-t h-[30%]"></div>
-                   <div className="w-full bg-blue-500/80 rounded-t h-[80%]"></div>
-                   <div className="w-full bg-blue-500/50 rounded-t h-[50%]"></div>
-                   <div className="w-full bg-blue-500/90 rounded-t h-[100%]"></div>
-                </div>
-              </div>
-              <div className="h-64 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col gap-4 items-center justify-center">
-                 <div className="h-4 w-32 bg-white/20 rounded self-start mb-auto"></div>
-                 {/* Mock pie chart */}
-                 <div className="w-32 h-32 rounded-full border-[12px] border-white/10 border-t-cyan-400 border-r-blue-500 opacity-80"></div>
-                 <div className="mt-auto"></div>
-              </div>
-            </div>
-
-            {/* List */}
-            <div className="h-48 rounded-xl bg-white/5 border border-white/10 p-5 flex flex-col gap-4">
-              <div className="h-4 w-40 bg-white/20 rounded mb-2"></div>
-              {[1,2,3].map(i => (
-                <div key={i} className="flex justify-between items-center opacity-60 border-b border-white/5 pb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white/20"></div>
-                    <div className="h-3 w-32 bg-white/10 rounded"></div>
-                  </div>
-                  <div className="h-3 w-16 bg-white/20 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 4. Feature Section */}
       <section id="features" className="w-full px-6 lg:px-12 py-24 bg-[#0B1120] relative z-20">
@@ -239,38 +154,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Testimonials */}
-      <section className="w-full px-6 lg:px-12 py-24 bg-[#0B1120] relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col text-center mb-16">
-          <h2 className="font-display-lg text-4xl md:text-[48px] text-white font-bold tracking-tight mb-4">Loved By Smart Savers</h2>
-        </div>
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {[
-            { name: 'Priya Sharma', role: 'Software Engineer', text: 'SpendSense found 3 streaming subscriptions I forgot I was paying for. The AI insights alone saved me ₹2,400 this month.' },
-            { name: 'Rahul Desai', role: 'Freelance Designer', text: 'The location-based tracking is mind-blowing. I finally understand exactly how much I spend at my local cafes. A truly premium experience.' },
-            { name: 'Ananya Verma', role: 'Product Manager', text: 'Unlike other bulky finance apps, SpendSense feels like magic. The UI is gorgeous and the categorization is 100% accurate every time.' }
-          ].map((t, i) => (
-            <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[24px] flex flex-col">
-              <div className="flex items-center gap-1 mb-6">
-                {[1,2,3,4,5].map(s => <span key={s} className="material-symbols-outlined text-[#FBBF24] text-[18px]">star</span>)}
-              </div>
-              <p className="text-white/80 font-body-md text-lg leading-relaxed mb-8 flex-1">"{t.text}"</p>
-              <div className="flex items-center gap-4 mt-auto">
-                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-bold text-white text-lg">
-                  {t.name.charAt(0)}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-white">{t.name}</span>
-                  <span className="text-white/50 text-sm">{t.role}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-
-        </div>
-      </section>
 
       {/* 7. Final CTA */}
       <section className="w-full px-6 lg:px-12 py-12 relative z-20">
@@ -293,54 +176,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. Footer */}
-      <footer className="w-full px-6 lg:px-12 py-16 bg-[#070b14] border-t border-white/10 relative z-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-semibold mb-2">Product</h4>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Features</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Integrations</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Pricing</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Changelog</Link>
-          </div>
 
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-semibold mb-2">Company</h4>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">About Us</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Careers</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Blog</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Contact</Link>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-semibold mb-2">Resources</h4>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Documentation</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Help Center</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Community</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Security</Link>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-semibold mb-2">Social</h4>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Twitter</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">LinkedIn</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">GitHub</Link>
-            <Link href="#" className="text-white/50 hover:text-white transition-colors text-sm">Discord</Link>
-          </div>
-
-        </div>
-        
-        <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-[14px]">account_balance_wallet</span>
-            </div>
-            <span className="text-white font-bold tracking-tight">SpendSense</span>
-          </div>
-          <p className="font-label-sm text-sm font-medium text-white/40">© 2026 SpendSense. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
