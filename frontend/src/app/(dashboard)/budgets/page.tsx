@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useBudgets } from '@/hooks/useBudgets';
+import { useCategories } from '@/hooks/useCategories';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
@@ -17,8 +18,6 @@ const CATEGORY_ICONS: Record<string, string> = {
   'default': 'account_balance_wallet',
 };
 
-const PROGRESS_COLORS = ['bg-error', 'bg-tertiary', 'bg-secondary', 'bg-primary'];
-
 function getBudgetColor(pct: number) {
   if (pct >= 90) return 'bg-error';
   if (pct >= 70) return 'bg-tertiary';
@@ -28,7 +27,13 @@ function getBudgetColor(pct: number) {
 export default function BudgetsPage() {
   const queryClient = useQueryClient();
   const { data: budgetsData, isLoading } = useBudgets();
+  const { data: categoriesData } = useCategories();
+  const categories = categoriesData?.items || [];
   const budgets = budgetsData?.items ?? [];
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addForm, setAddForm] = useState({ category_id: '', monthly_limit: '' });
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   const totalLimit = budgets.reduce((acc: number, b: any) => acc + (b.monthly_limit ?? 0), 0);
   const totalSpent = budgets.reduce((acc: number, b: any) => acc + (b.spent ?? 0), 0);
@@ -36,6 +41,25 @@ export default function BudgetsPage() {
   const totalPct = totalLimit > 0 ? Math.round((totalSpent / totalLimit) * 100) : 0;
 
   const currentMonth = new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+
+  const addMutation = useMutation({
+    mutationFn: (data: { category_id: string; monthly_limit: number }) => api.post('/budgets', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] });
+      setIsAddModalOpen(false);
+      setAddForm({ category_id: '', monthly_limit: '' });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.delete(`/budgets/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['budgets'] }),
+  });
+
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addMutation.mutate({ category_id: addForm.category_id, monthly_limit: parseFloat(addForm.monthly_limit) });
+  };
 
   return (
     <>
@@ -61,7 +85,7 @@ export default function BudgetsPage() {
               <span className="material-symbols-outlined text-[18px]">calendar_month</span>
               {currentMonth}
             </button>
-            <button className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
+            <button onClick={() => setIsAddModalOpen(true)} className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-container transition-colors rounded-full text-on-primary shadow-lg shadow-primary/20 group">
               <span className="material-symbols-outlined transition-transform group-hover:rotate-90">add</span>
             </button>
           </div>
@@ -73,7 +97,6 @@ export default function BudgetsPage() {
           </div>
         ) : (
           <>
-            {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-md relative z-10">
               <div className="bg-surface-container-low/60 backdrop-blur-xl p-md rounded-2xl flex flex-col gap-sm relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -125,7 +148,6 @@ export default function BudgetsPage() {
               </div>
             </div>
 
-            {/* Budget Cards */}
             <div className="flex flex-col gap-md relative z-10">
               <h2 className="font-headline-lg text-headline-lg text-on-background mb-sm">Category Breakdown</h2>
               {budgets.length === 0 ? (
@@ -139,7 +161,7 @@ export default function BudgetsPage() {
                     const pct = budget.monthly_limit > 0 ? Math.round((budget.spent / budget.monthly_limit) * 100) : 0;
                     const remaining = budget.monthly_limit - budget.spent;
                     const colorClass = getBudgetColor(pct);
-                    const iconName = CATEGORY_ICONS[budget.category?.name?.toLowerCase()] ?? CATEGORY_ICONS['default'];
+                    const iconName = CATEGORY_ICONS[budget.category_name?.toLowerCase()] ?? CATEGORY_ICONS['default'];
 
                     return (
                       <div key={budget.id} className="bg-surface-container-low/40 backdrop-blur-xl p-md rounded-2xl flex flex-col gap-md hover:bg-surface-container-low/60 transition-colors">
@@ -149,13 +171,25 @@ export default function BudgetsPage() {
                               <span className={`material-symbols-outlined ${pct >= 90 ? 'text-error' : pct >= 70 ? 'text-tertiary' : 'text-secondary'}`}>{iconName}</span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-headline-md text-headline-md text-on-background">{budget.category?.name ?? 'Budget'}</span>
+                              <span className="font-headline-md text-headline-md text-on-background">{budget.category_name ?? 'Budget'}</span>
                               <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">{budget.month ?? currentMonth}</span>
                             </div>
                           </div>
-                          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-2">
-                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                          </button>
+                          <div className="relative">
+                            <button onClick={() => setMenuOpenId(menuOpenId === budget.id ? null : budget.id)} className="text-on-surface-variant hover:text-on-surface transition-colors p-2">
+                              <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                            {menuOpenId === budget.id && (
+                              <>
+                                <div className="fixed inset-0 z-10" onClick={() => setMenuOpenId(null)} />
+                                <div className="absolute right-0 top-full mt-1 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-20 py-1 min-w-[140px]">
+                                  <button onClick={() => { deleteMutation.mutate(budget.id); setMenuOpenId(null); }} className="w-full text-left px-md py-sm hover:bg-surface-container-highest text-error font-label-md text-label-md flex items-center gap-sm">
+                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                         <div className="flex flex-col gap-xs">
                           <div className="flex justify-between items-baseline">
@@ -165,10 +199,7 @@ export default function BudgetsPage() {
                             <span className="font-body-md text-body-md text-on-surface-variant">/ ₹{budget.monthly_limit?.toLocaleString()}</span>
                           </div>
                           <div className="relative w-full h-3 bg-surface-container-highest rounded-full mt-2 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
-                            <div
-                              className={`absolute top-0 left-0 h-full ${colorClass} rounded-full transition-all duration-1000 ease-out`}
-                              style={{ width: `${Math.min(pct, 100)}%` }}
-                            ></div>
+                            <div className={`absolute top-0 left-0 h-full ${colorClass} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${Math.min(pct, 100)}%` }}></div>
                           </div>
                           <div className="flex justify-between items-center mt-1">
                             <span className={`font-label-sm text-label-sm font-semibold ${pct >= 90 ? 'text-error' : pct >= 70 ? 'text-tertiary' : 'text-secondary'}`}>{pct}% Spent</span>
@@ -184,6 +215,33 @@ export default function BudgetsPage() {
           </>
         )}
       </div>
+
+      {isAddModalOpen && (
+        <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setIsAddModalOpen(false)}>
+          <form onSubmit={handleAddSubmit} className="bg-surface-container rounded-2xl w-full max-w-[448px] p-lg flex flex-col gap-md shadow-2xl border border-outline-variant/30" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-sm">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Add Budget</h3>
+              <button type="button" onClick={() => setIsAddModalOpen(false)} className="text-on-surface-variant hover:text-on-surface"><span className="material-symbols-outlined">close</span></button>
+            </div>
+            <div className="flex flex-col gap-xs">
+              <label className="font-label-md text-on-surface">Category</label>
+              <select required value={addForm.category_id} onChange={e => setAddForm({...addForm, category_id: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+                <option value="">Select a category</option>
+                {categories.map((cat: any) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-xs">
+              <label className="font-label-md text-on-surface">Monthly Limit (₹)</label>
+              <input required type="number" step="0.01" value={addForm.monthly_limit} onChange={e => setAddForm({...addForm, monthly_limit: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="0.00" />
+            </div>
+            <button type="submit" disabled={addMutation.isPending} className="mt-sm bg-primary text-on-primary py-sm rounded-xl font-label-md hover:bg-primary-fixed transition-colors disabled:opacity-50">
+              {addMutation.isPending ? 'Saving...' : 'Save Budget'}
+            </button>
+          </form>
+        </div>
+      )}
     </>
   );
 }

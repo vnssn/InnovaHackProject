@@ -162,7 +162,7 @@ export default function AiAssistantPage() {
             )}
 
             <div className="mt-auto pt-md border-t border-outline-variant/30 flex items-center justify-between">
-              <span className="font-label-sm text-label-sm text-on-surface-variant">AI Financial Copilot</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant">Spend Sense</span>
               <span className="flex items-center gap-xs text-secondary">
                 <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
                 <span className="font-label-sm text-label-sm">Active</span>
@@ -180,7 +180,7 @@ export default function AiAssistantPage() {
                   <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-sm">
                     <span className="material-symbols-outlined text-primary text-[40px]">smart_toy</span>
                   </div>
-                  <h3 className="font-headline-lg text-headline-lg text-on-surface whitespace-nowrap">AI Financial Copilot</h3>
+                  <h3 className="font-headline-lg text-headline-lg text-on-surface whitespace-nowrap">Spend Sense</h3>
                   <p className="font-body-md text-body-md text-on-surface-variant max-w-[448px] mx-auto">
                     Ask me anything about your finances — spending patterns, budget advice, subscription leaks, and more.
                   </p>

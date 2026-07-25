@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import { useOverviewAnalytics, useCategoryBreakdown } from '@/hooks/useAnalytics';
 
 export default function AnalyticsPage() {
+  const router = useRouter();
   const { data: overview, isLoading } = useOverviewAnalytics();
   const { data: categoryData } = useCategoryBreakdown();
 
@@ -21,11 +23,19 @@ export default function AnalyticsPage() {
             <p className="font-body-md text-body-md text-on-surface-variant">Deep insights into your financial patterns and trends.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
+            <button onClick={() => router.push('/dashboard')} className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">calendar_today</span>
               Last 6 Months
             </button>
-            <button className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
+            <button onClick={() => {
+              const csvRows = [overview?.top_merchants?.map((m: any) => `${m.name},${m.total_spent || 0}`).join('\n') || ''];
+              const csv = `Merchant,Total Spent\n${csvRows[0]}`;
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url; a.download = 'analytics-report.csv'; a.click();
+              URL.revokeObjectURL(url);
+            }} className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export Report
             </button>

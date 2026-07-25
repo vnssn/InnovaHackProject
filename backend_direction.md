@@ -1,4 +1,4 @@
-# AI Financial Copilot — Backend Direction
+# Spend Sense — Backend Direction
 
 ## Overview
 

@@ -1,4 +1,4 @@
-# AI Financial Copilot
+# Spend Sense
 
 ## Vision
 
@@ -361,7 +361,7 @@ Examples:
 
 ---
 
-# AI Financial Assistant
+# Spend Sense
 
 Users should interact naturally.
 

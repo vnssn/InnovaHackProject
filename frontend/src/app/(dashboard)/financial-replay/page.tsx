@@ -118,9 +118,9 @@ export default function FinancialReplayPage() {
                         <span className="material-symbols-outlined text-primary">auto_awesome</span>
                       </div>
                       <div className="flex flex-col gap-xs">
-                        <h4 className="font-label-md text-label-md text-on-surface">FinAI Insight</h4>
+                        <h4 className="font-label-md text-label-md text-on-surface">Spend Sense Insight</h4>
                         <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                          "{aiSummary}"
+                          {aiSummary}
                         </p>
                       </div>
                     </div>

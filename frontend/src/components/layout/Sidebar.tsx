@@ -37,7 +37,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         <div className="flex items-center justify-between mb-xl px-base">
           <div className="flex items-center gap-base">
             <span className="material-symbols-outlined text-primary text-[32px]">account_balance</span>
-            <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">FinCore</span>
+            <span className="font-headline-md text-headline-md tracking-tight text-on-surface ml-2">Spend Sense</span>
           </div>
           <button className="lg:hidden p-xs rounded-full hover:bg-surface-container text-on-surface" onClick={onClose}>
             <span className="material-symbols-outlined">close</span>

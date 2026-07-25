@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     REDIS_URL: str = "redis://localhost:6379/0"
     CORS_ORIGINS: str = "http://localhost:3000"
-    APP_NAME: str = "AI Financial Copilot"
+    APP_NAME: str = "Spend Sense"
     DEBUG: bool = True
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}

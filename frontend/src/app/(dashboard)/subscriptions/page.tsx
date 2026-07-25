@@ -5,6 +5,30 @@ import { useSubscriptions, useSubscriptionLeaks, useAddSubscription } from '@/ho
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
+function SubscriptionMenu({ subId, onEdit, onDelete }: { subId: string; onEdit: (id: string) => void; onDelete: (id: string) => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)} className="text-on-surface-variant hover:text-on-surface transition-colors p-xs rounded-full hover:bg-surface-container-highest">
+        <span className="material-symbols-outlined text-[20px]">more_vert</span>
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-20 py-1 min-w-[140px]">
+            <button onClick={() => { onEdit(subId); setOpen(false); }} className="w-full text-left px-md py-sm hover:bg-surface-container-highest text-on-surface font-label-md text-label-md flex items-center gap-sm">
+              <span className="material-symbols-outlined text-[16px]">edit</span> Edit
+            </button>
+            <button onClick={() => { onDelete(subId); setOpen(false); }} className="w-full text-left px-md py-sm hover:bg-surface-container-highest text-error font-label-md text-label-md flex items-center gap-sm">
+              <span className="material-symbols-outlined text-[16px]">delete</span> Delete
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function SubscriptionsPage() {
   const queryClient = useQueryClient();
   const { data: subsData, isLoading } = useSubscriptions('active');
@@ -30,6 +54,25 @@ export default function SubscriptionsPage() {
     mutationFn: () => api.post('/subscriptions/detect'),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['subscriptions'] }),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.delete(`/subscriptions/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['subscriptions'] }),
+  });
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this subscription?')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    const sub = subs.find((s: any) => s.id === id);
+    if (sub) {
+      setAddForm({ amount: String(sub.amount), custom_name: sub.merchant_name || sub.notes || '', next_date: sub.next_date ? new Date(sub.next_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16) });
+      setIsAddModalOpen(true);
+    }
+  };
 
   const subs = subsData?.items ?? [];
   const leaks = leaksData ?? {};
@@ -99,7 +142,7 @@ export default function SubscriptionsPage() {
                   <p className="font-label-md text-label-md text-tertiary mb-xs">Potential Savings</p>
                   <p className="font-headline-md text-headline-md text-on-surface">₹{leaks.potential_savings?.toLocaleString() ?? 0} <span className="font-body-md text-body-md text-on-surface-variant">/mo</span></p>
                 </div>
-                <button className="bg-tertiary text-on-tertiary font-label-md text-label-md py-sm px-md rounded-xl hover:bg-tertiary-fixed transition-colors shadow-lg shadow-tertiary/20">
+                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="bg-tertiary text-on-tertiary font-label-md text-label-md py-sm px-md rounded-xl hover:bg-tertiary-fixed transition-colors shadow-lg shadow-tertiary/20">
                   Review Matches
                 </button>
               </div>
@@ -151,12 +194,10 @@ export default function SubscriptionsPage() {
                     <div className="w-12 h-12 bg-surface-container-highest rounded-xl flex items-center justify-center shadow-inner">
                       <span className="material-symbols-outlined text-on-surface text-[24px]">subscriptions</span>
                     </div>
-                    <button className="text-on-surface-variant hover:text-on-surface transition-colors p-xs rounded-full hover:bg-surface-container-highest">
-                      <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                    </button>
+                    <SubscriptionMenu subId={sub.id} onEdit={handleEdit} onDelete={handleDelete} />
                   </div>
-                  <h4 className="font-headline-md text-on-surface mb-xs">{sub.custom_name ?? sub.merchant?.name ?? 'Unknown'}</h4>
-                  <p className="font-body-md text-body-md text-on-surface-variant mb-lg">{sub.category?.name ?? 'Subscription'}</p>
+                  <h4 className="font-headline-md text-on-surface mb-xs">{sub.merchant_name ?? sub.notes ?? 'Unknown'}</h4>
+                  <p className="font-body-md text-body-md text-on-surface-variant mb-lg">{sub.category_name ?? 'Subscription'}</p>
                   <div className="mt-auto pt-md border-t border-outline-variant/30 flex items-end justify-between">
                     <div>
                       <p className="font-headline-md text-headline-md text-on-surface">₹{sub.amount?.toLocaleString()} <span className="font-label-md text-label-md text-on-surface-variant font-normal">/{sub.frequency ?? 'mo'}</span></p>

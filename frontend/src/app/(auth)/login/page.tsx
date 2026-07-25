@@ -79,7 +79,7 @@ export default function LoginPage() {
             <span className="material-symbols-outlined text-primary text-3xl">account_balance_wallet</span>
           </div>
           <h1 className="text-2xl font-bold text-on-surface">Welcome Back</h1>
-          <p className="text-on-surface-variant mt-2">Sign in to your FinGuard account</p>
+          <p className="text-on-surface-variant mt-2">Sign in to your Spend Sense account</p>
         </div>
 
         {error && (

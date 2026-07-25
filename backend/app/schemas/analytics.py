@@ -28,6 +28,6 @@ class TrendsResponse(BaseModel):
 
 class OverviewResponse(BaseModel):
     dashboard: dict
-    category_breakdown: list[dict]
+    category_breakdown: CategoryBreakdown
     trends: list[dict]
     top_merchants: list[dict]

@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FinGuard AI Copilot",
-  description: "AI Financial Copilot",
+  title: "Spend Sense",
+  description: "Spend Sense - Smart Financial Management",
 };
 
 export default function RootLayout({

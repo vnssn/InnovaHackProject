@@ -88,7 +88,7 @@ class AIService:
                 "id": str(uuid.uuid4()),
                 "title": "Food spending is your top category",
                 "description": "You spent the most on food this month. Consider setting a budget.",
-                "type": "spending_pattern",
+                "type": "tip",
                 "severity": "info",
                 "created_at": "2024-01-01T00:00:00Z",
             }]

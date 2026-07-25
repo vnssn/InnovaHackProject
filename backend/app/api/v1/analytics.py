@@ -72,7 +72,7 @@ async def get_overview(
 
     return OverviewResponse(
         dashboard=dashboard,
-        category_breakdown=cat_breakdown,
+        category_breakdown=CategoryBreakdown(items=cat_breakdown),
         trends=trends,
         top_merchants=top_merchants,
     )
