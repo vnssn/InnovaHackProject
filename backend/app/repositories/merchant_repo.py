@@ -50,7 +50,7 @@ class MerchantRepository(BaseRepository[Merchant]):
 
         trend_result = await self.db.execute(
             select(
-                func.strftime("%Y-%m", Transaction.transaction_date).label("month"),
+                func.to_char(Transaction.transaction_date, 'YYYY-MM').label("month"),
                 func.sum(Transaction.amount).label("total"),
             )
             .where(Transaction.merchant_id == merchant_id, Transaction.user_id == user_id)

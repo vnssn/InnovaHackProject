@@ -86,17 +86,16 @@ class TransactionRepository(BaseRepository[Transaction]):
     async def get_timeline(
         self, user_id: uuid.UUID, group_by: str, start_date: datetime | None, end_date: datetime | None
     ) -> list[dict]:
-        # SQLite compatible grouping using strftime
         fmt_map = {
-            "daily": "%Y-%m-%d",
-            "weekly": "%Y-%W",
-            "monthly": "%Y-%m",
-            "yearly": "%Y",
+            "daily": "YYYY-MM-DD",
+            "weekly": "YYYY-IW",
+            "monthly": "YYYY-MM",
+            "yearly": "YYYY",
         }
-        fmt = fmt_map.get(group_by, "%Y-%m-%d")
+        fmt = fmt_map.get(group_by, "YYYY-MM-DD")
 
         query = select(
-            func.strftime(fmt, Transaction.transaction_date).label("period"),
+            func.to_char(Transaction.transaction_date, fmt).label("period"),
             func.sum(Transaction.amount).label("total"),
             func.count(Transaction.id).label("count"),
         ).where(Transaction.user_id == user_id)
@@ -118,7 +117,7 @@ class TransactionRepository(BaseRepository[Transaction]):
                 .options(joinedload(Transaction.merchant), joinedload(Transaction.category))
                 .where(
                     Transaction.user_id == user_id,
-                    func.strftime(fmt, Transaction.transaction_date) == period_str,
+                    func.to_char(Transaction.transaction_date, fmt) == period_str,
                 )
                 .order_by(Transaction.transaction_date.desc())
             )

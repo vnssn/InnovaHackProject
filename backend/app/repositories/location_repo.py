@@ -23,9 +23,9 @@ class LocationRepository:
             Merchant.lng.isnot(None),
         )
         if year and month:
-            query = query.where(func.strftime("%Y-%m", Transaction.transaction_date) == f"{year}-{month}")
+            query = query.where(func.to_char(Transaction.transaction_date, 'YYYY-MM') == f"{year}-{month}")
         elif year:
-            query = query.where(func.strftime("%Y", Transaction.transaction_date) == year)
+            query = query.where(func.to_char(Transaction.transaction_date, 'YYYY') == year)
 
         query = query.group_by(Merchant.lat, Merchant.lng, Merchant.locality)
         result = await self.db.execute(query)

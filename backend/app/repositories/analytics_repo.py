@@ -142,9 +142,8 @@ class AnalyticsRepository:
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=months * 30)
 
-        # SQLite-compatible: use strftime for grouping
         query = select(
-            func.strftime("%Y-%m", Transaction.transaction_date).label("month"),
+            func.to_char(Transaction.transaction_date, 'YYYY-MM').label("month"),
             func.coalesce(func.sum(Transaction.amount), 0).label("total"),
         ).where(
             Transaction.user_id == user_id,
