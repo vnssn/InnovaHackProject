@@ -19,7 +19,6 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
     { name: "Dashboard", path: "/dashboard", icon: "dashboard" },
     { name: "Transactions", path: "/transactions", icon: "payments" },
     { name: "Analytics", path: "/analytics", icon: "insights" },
-    { name: "Merchants", path: "/merchants", icon: "store" },
     { name: "Subscriptions", path: "/subscriptions", icon: "calendar_today" },
     { name: "Locations", path: "/locations", icon: "location_on" },
     { name: "Budgets", path: "/budgets", icon: "account_balance_wallet" },
