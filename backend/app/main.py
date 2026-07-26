@@ -13,6 +13,11 @@ async def lifespan(app: FastAPI):
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+        try:
+            from seed import seed
+            await seed()
+        except Exception as seed_err:
+            print(f"Skipping auto-seed: {seed_err}")
     except Exception as e:
         print(f"Database not available: {e}")
         print("Run `docker compose up -d` to start PostgreSQL, then run `alembic upgrade head`")

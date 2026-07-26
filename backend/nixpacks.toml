@@ -5,4 +5,4 @@ nixPkgs = ["python311", "gcc", "postgresql"]
 cmds = ["python -m venv /opt/venv && . /opt/venv/bin/activate && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt"]
 
 [start]
-cmd = ". /opt/venv/bin/activate && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = ". /opt/venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
