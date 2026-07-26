@@ -142,7 +142,7 @@ export default function SubscriptionsPage() {
                   <p className="font-label-md text-label-md text-tertiary mb-xs">Potential Savings</p>
                   <p className="font-headline-md text-headline-md text-on-surface">₹{leaks.potential_savings?.toLocaleString() ?? 0} <span className="font-body-md text-body-md text-on-surface-variant">/mo</span></p>
                 </div>
-                <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="bg-tertiary text-on-tertiary font-label-md text-label-md py-sm px-md rounded-xl hover:bg-tertiary-fixed transition-colors shadow-lg shadow-tertiary/20">
+                <button onClick={() => alert("Matches review coming soon!")} className="bg-tertiary text-on-tertiary font-label-md text-label-md py-sm px-md rounded-xl hover:bg-tertiary-fixed transition-colors shadow-lg shadow-tertiary/20">
                   Review Matches
                 </button>
               </div>
@@ -194,9 +194,11 @@ export default function SubscriptionsPage() {
                     <div className="w-12 h-12 bg-surface-container-highest rounded-xl flex items-center justify-center shadow-inner">
                       <span className="material-symbols-outlined text-on-surface text-[24px]">subscriptions</span>
                     </div>
-                    <SubscriptionMenu subId={sub.id} onEdit={handleEdit} onDelete={handleDelete} />
+                    <button onClick={() => alert("Subscription options coming soon!")} className="text-on-surface-variant hover:text-on-surface transition-colors p-xs rounded-full hover:bg-surface-container-highest">
+                      <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                    </button>
                   </div>
-                  <h4 className="font-headline-md text-on-surface mb-xs">{sub.merchant_name ?? sub.notes ?? 'Unknown'}</h4>
+                  <h4 className="font-headline-md text-on-surface mb-xs">{sub.notes ?? sub.merchant_name ?? 'Unknown'}</h4>
                   <p className="font-body-md text-body-md text-on-surface-variant mb-lg">{sub.category_name ?? 'Subscription'}</p>
                   <div className="mt-auto pt-md border-t border-outline-variant/30 flex items-end justify-between">
                     <div>

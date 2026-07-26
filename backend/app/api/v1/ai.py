@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -22,8 +22,10 @@ async def chat(
     body: ChatRequest,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key"),
+    x_ai_provider: str | None = Header(default=None, alias="X-AI-Provider"),
 ):
-    service = AIService(db)
+    service = AIService(db, api_key=x_ai_api_key, provider=x_ai_provider)
     result = await service.chat(user.id, body.message)
     return ChatResponse(response=result["response"], citations=result.get("citations"))
 
@@ -32,8 +34,10 @@ async def chat(
 async def get_insights(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key"),
+    x_ai_provider: str | None = Header(default=None, alias="X-AI-Provider"),
 ):
-    service = AIService(db)
+    service = AIService(db, api_key=x_ai_api_key, provider=x_ai_provider)
     insights = await service.get_insights(user.id)
     return InsightsResponse(insights=insights)
 
@@ -42,8 +46,10 @@ async def get_insights(
 async def get_coach(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key"),
+    x_ai_provider: str | None = Header(default=None, alias="X-AI-Provider"),
 ):
-    service = AIService(db)
+    service = AIService(db, api_key=x_ai_api_key, provider=x_ai_provider)
     suggestions = await service.get_coach_suggestions(user.id)
     return CoachResponse(suggestions=suggestions)
 

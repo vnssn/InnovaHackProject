@@ -79,7 +79,7 @@ export default function SignupPage() {
             <span className="material-symbols-outlined text-primary text-3xl">account_balance_wallet</span>
           </div>
           <h1 className="text-2xl font-bold text-on-surface">Create an Account</h1>
-          <p className="text-on-surface-variant mt-2">Join Spend Sense today</p>
+          <p className="text-on-surface-variant mt-2">Join SpendSense today to master your money</p>
         </div>
 
         {error && (

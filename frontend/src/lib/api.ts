@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,43 +36,24 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     if (error.response?.status === 401 && !originalRequest._retry) {
-      const refreshToken = useAuthStore.getState().refreshToken;
-
-      if (!refreshToken) {
-        useAuthStore.getState().clearAuth();
-        return Promise.reject(error);
-      }
-
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        }).then(token => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
-        });
-      }
-
       originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-        const response = await axios.post(`${baseUrl}/auth/refresh`, {
-          refresh_token: refreshToken,
-        });
-        const { access_token, refresh_token } = response.data;
-        useAuthStore.getState().setAuth(access_token, refresh_token, useAuthStore.getState().user!);
-        processQueue(null, access_token);
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        useAuthStore.getState().clearAuth();
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
+      const { refreshToken, setAuth, clearAuth, user } = useAuthStore.getState();
+      
+      if (refreshToken) {
+        try {
+          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken });
+          const { access_token, refresh_token: new_refresh_token } = response.data;
+          
+          setAuth(access_token, new_refresh_token, user || undefined);
+          
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
+          return axios(originalRequest);
+        } catch (refreshError) {
+          clearAuth();
+        }
+      } else {
+        clearAuth();
       }
     }
 

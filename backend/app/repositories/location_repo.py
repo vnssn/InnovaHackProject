@@ -22,10 +22,18 @@ class LocationRepository:
             Merchant.lat.isnot(None),
             Merchant.lng.isnot(None),
         )
+        dialect = self.db.bind.dialect.name if self.db.bind else "sqlite"
+        if dialect == "postgresql":
+            year_month_expr = func.to_char(Transaction.transaction_date, 'YYYY-MM')
+            year_expr = func.to_char(Transaction.transaction_date, 'YYYY')
+        else:
+            year_month_expr = func.strftime("%Y-%m", Transaction.transaction_date)
+            year_expr = func.strftime("%Y", Transaction.transaction_date)
+
         if year and month:
-            query = query.where(func.to_char(Transaction.transaction_date, 'YYYY-MM') == f"{year}-{month}")
+            query = query.where(year_month_expr == f"{year}-{month}")
         elif year:
-            query = query.where(func.to_char(Transaction.transaction_date, 'YYYY') == year)
+            query = query.where(year_expr == year)
 
         query = query.group_by(Merchant.lat, Merchant.lng, Merchant.locality)
         result = await self.db.execute(query)

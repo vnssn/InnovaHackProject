@@ -40,17 +40,7 @@ export default function TransactionsPage() {
             <p className="font-body-lg text-body-lg text-on-surface-variant">Review and manage your financial activity across all linked accounts.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button onClick={() => {
-              const csvRows = transactionsData?.items?.map((txn: any) => 
-                `${txn.transaction_date},${txn.merchant_name || txn.description},${txn.category_name || ''},${txn.amount},${txn.status}`
-              ) || [];
-              const csv = `Date,Merchant,Category,Amount,Status\n${csvRows.join('\n')}`;
-              const blob = new Blob([csv], { type: 'text/csv' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url; a.download = 'transactions.csv'; a.click();
-              URL.revokeObjectURL(url);
-            }} className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
+            <button onClick={() => alert("CSV Export feature coming soon!")} className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export CSV
             </button>

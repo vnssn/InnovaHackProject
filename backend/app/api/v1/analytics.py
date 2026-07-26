@@ -19,20 +19,22 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 @router.get("/dashboard", response_model=DashboardResponse)
 async def get_dashboard(
+    days: int | None = Query(default=None),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     repo = AnalyticsRepository(db)
-    return await repo.get_dashboard(user.id)
+    return await repo.get_dashboard(user.id, days=days)
 
 
 @router.get("/category-breakdown", response_model=CategoryBreakdown)
 async def get_category_breakdown(
+    days: int | None = Query(default=None),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     repo = AnalyticsRepository(db)
-    items = await repo.get_category_breakdown(user.id)
+    items = await repo.get_category_breakdown(user.id, days=days)
     return CategoryBreakdown(items=items)
 
 

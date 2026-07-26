@@ -68,6 +68,7 @@ class AuthService:
     async def google_login(self, token: str) -> TokenResponse:
         email = None
         name = "Google User"
+        avatar_url = None
 
         if token.startswith("{"):
             # Mock token processing
@@ -75,9 +76,10 @@ class AuthService:
             try:
                 user_data = json.loads(token)
                 email = user_data.get("email")
-                name = user_data.get("name", "Google User")
-            except:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid mock google token")
+                name = user_data.get("name") or user_data.get("given_name") or (email.split("@")[0] if email else "Google User")
+                avatar_url = user_data.get("picture") or user_data.get("avatar_url")
+            except Exception as e:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid mock google token: {e}")
         else:
             # Real token processing via Google UserInfo API
             import httpx
@@ -90,11 +92,14 @@ class AuthService:
                     if response.status_code == 200:
                         user_info = response.json()
                         email = user_info.get("email")
-                        name = user_info.get("name", "Google User")
+                        name = user_info.get("name") or user_info.get("given_name") or (email.split("@")[0] if email else "Google User")
+                        avatar_url = user_info.get("picture")
                     else:
-                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid google token")
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid google token (status {response.status_code})")
+            except HTTPException:
+                raise
             except Exception as e:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Google auth error: {e}")
 
         if not email:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is required from Google Auth")
@@ -104,7 +109,8 @@ class AuthService:
             user = await self.user_repo.create(
                 email=email,
                 hashed_password=hash_password("google_oauth_mock_password"),
-                name=name,
+                name=name or "Google User",
+                avatar_url=avatar_url,
             )
 
         access_token = create_access_token(str(user.id))

@@ -5,8 +5,13 @@ export const useInsights = () => {
   return useQuery({
     queryKey: ['ai', 'insights'],
     queryFn: async () => {
-      const response = await api.get('/ai/insights');
-      return response.data;
+      try {
+        const response = await api.get('/ai/insights');
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch insights:', error);
+        return { insights: [] };
+      }
     },
   });
 };
