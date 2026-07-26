@@ -21,37 +21,31 @@ class AIService:
         
         # 1. Prioritize user-provided API key from frontend
         if api_key:
-            if provider == "gemini" or api_key.startswith("AIza"):
+            if provider == "gemini":
                 self.client = AsyncOpenAI(
                     api_key=api_key,
                     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
                 )
-                self.model = "gemini-1.5-flash"
-            elif provider == "openrouter" or api_key.startswith("sk-or-"):
+                self.model = "gemini-2.0-flash"
+            elif provider == "openrouter":
                 self.client = AsyncOpenAI(
                     api_key=api_key,
                     base_url="https://openrouter.ai/api/v1",
                 )
                 self.model = "google/gemini-2.0-flash-lite-001"
-            else:
-                self.client = AsyncOpenAI(api_key=api_key)
-                self.model = "gpt-4o-mini"
         # 2. Fallback to server environment variables
+        elif self.gemini_key:
+            self.client = AsyncOpenAI(
+                api_key=self.gemini_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+            )
+            self.model = "gemini-2.0-flash"
         elif self.openrouter_key:
             self.client = AsyncOpenAI(
                 api_key=self.openrouter_key,
                 base_url="https://openrouter.ai/api/v1",
             )
             self.model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-lite-001")
-        elif self.gemini_key:
-            self.client = AsyncOpenAI(
-                api_key=self.gemini_key,
-                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-            )
-            self.model = "gemini-1.5-flash"
-        elif self.openai_key:
-            self.client = AsyncOpenAI(api_key=self.openai_key)
-            self.model = "gpt-4o-mini"
 
     async def _get_txn_context(self, user_id: uuid.UUID, limit: int = 50) -> str:
         recent_result = await self.txn_repo.list_filtered(user_id, page=1, size=limit, sort_by="transaction_date", sort_order="desc")
