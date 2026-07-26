@@ -210,10 +210,10 @@ export default function AiAssistantPage() {
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-primary/20 via-secondary/20 to-tertiary/20 flex items-center justify-center mb-1 shadow-inner border border-outline-variant/20">
               <span className="material-symbols-outlined text-primary text-[44px]">auto_awesome</span>
             </div>
-            <h2 className="font-display-md text-xl md:text-2xl text-on-surface font-bold max-w-lg">
+            <h2 className="font-display-md text-xl md:text-2xl text-on-surface font-bold max-w-lg w-full">
               How can I help you optimize your money today?
             </h2>
-            <p className="font-body-md text-sm text-on-surface-variant max-w-md mx-auto">
+            <p className="font-body-md text-sm text-on-surface-variant max-w-md mx-auto w-full">
               Ask me questions about your spending trends, hidden subscription leaks, or custom budgeting strategies.
             </p>
 
