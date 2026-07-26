@@ -1,10 +1,15 @@
 "use client";
 
+import { useState } from 'react';
 import { useOverviewAnalytics, useCategoryBreakdown } from '@/hooks/useAnalytics';
 
 export default function AnalyticsPage() {
+  const [dateFilter, setDateFilter] = useState<'1d' | '7d' | '30d'>('30d');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const daysParam = dateFilter === '1d' ? 1 : dateFilter === '7d' ? 7 : 30;
+
   const { data: overview, isLoading } = useOverviewAnalytics();
-  const { data: categoryData } = useCategoryBreakdown();
+  const { data: categoryData } = useCategoryBreakdown(daysParam);
 
   const dashboard = overview?.dashboard;
   const topMerchants = overview?.top_merchants ?? [];
@@ -20,12 +25,56 @@ export default function AnalyticsPage() {
             <h1 className="font-display-lg text-display-lg text-on-surface">Analytics</h1>
             <p className="font-body-md text-body-md text-on-surface-variant">Deep insights into your financial patterns and trends.</p>
           </div>
-          <div className="flex items-center gap-sm">
-            <button onClick={() => alert("Filter options coming soon")} className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
-              <span className="material-symbols-outlined text-[18px]">calendar_today</span>
-              Last 6 Months
-            </button>
-            <button onClick={() => alert("Report generation coming soon")} className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
+          <div className="flex items-center gap-sm relative">
+            <div className="relative">
+              <button 
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)} 
+                className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs shadow-sm border border-outline-variant/20"
+              >
+                <span className="material-symbols-outlined text-[18px] text-primary">calendar_today</span>
+                <span>{dateFilter === '1d' ? 'Last 24 Hours' : dateFilter === '7d' ? 'Last 7 Days' : 'Last 30 Days'}</span>
+                <span className="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+              </button>
+
+              {showFilterDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-xl py-xs z-50 flex flex-col">
+                  <button
+                    onClick={() => { setDateFilter('1d'); setShowFilterDropdown(false); }}
+                    className="w-full text-left px-md py-sm hover:bg-surface-container-highest font-label-md text-label-md text-on-surface flex items-center justify-between transition-colors"
+                  >
+                    <span>1 Day (24 Hours)</span>
+                    {dateFilter === '1d' && <span className="material-symbols-outlined text-[16px] text-primary">check</span>}
+                  </button>
+                  <button
+                    onClick={() => { setDateFilter('7d'); setShowFilterDropdown(false); }}
+                    className="w-full text-left px-md py-sm hover:bg-surface-container-highest font-label-md text-label-md text-on-surface flex items-center justify-between transition-colors"
+                  >
+                    <span>7 Days (1 Week)</span>
+                    {dateFilter === '7d' && <span className="material-symbols-outlined text-[16px] text-primary">check</span>}
+                  </button>
+                  <button
+                    onClick={() => { setDateFilter('30d'); setShowFilterDropdown(false); }}
+                    className="w-full text-left px-md py-sm hover:bg-surface-container-highest font-label-md text-label-md text-on-surface flex items-center justify-between transition-colors"
+                  >
+                    <span>30 Days (1 Month)</span>
+                    {dateFilter === '30d' && <span className="material-symbols-outlined text-[16px] text-primary">check</span>}
+                  </button>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={() => {
+                const csvContent = "data:text/csv;charset=utf-8,Category,Spend,Percentage\n" + categories.map((c: any) => `${c.category_name},${c.total},${c.percentage}%`).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "spendsense_report.csv");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+              }} 
+              className="px-md py-sm bg-primary hover:opacity-90 rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs"
+            >
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export Report
             </button>
