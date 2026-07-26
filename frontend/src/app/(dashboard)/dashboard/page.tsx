@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useDashboardAnalytics, useCategoryBreakdown, useTrends } from '@/hooks/useAnalytics';
 import { useInsights } from '@/hooks/useAI';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -349,10 +350,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {showAiModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-            <div className="bg-surface-container-high border border-outline-variant/30 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 relative">
-              <button onClick={() => setShowAiModal(false)} className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+        {showAiModal && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in">
+            <div className="bg-surface-container-high border border-outline-variant/30 rounded-2xl p-6 max-w-lg w-full min-w-[320px] md:min-w-[440px] shadow-2xl flex flex-col gap-4 relative" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setShowAiModal(false)} className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-container">
                 <span className="material-symbols-outlined">close</span>
               </button>
               
@@ -361,45 +362,45 @@ export default function DashboardPage() {
                 <h3 className="font-headline-md text-lg font-bold text-on-surface">Connect Live AI Copilot</h3>
               </div>
               
-              <p className="font-body-md text-sm text-on-surface-variant">
+              <p className="font-body-md text-sm text-on-surface-variant leading-relaxed">
                 Enter your free Gemini or OpenRouter API key to activate deep real-time financial analysis and subscription leak detection.
               </p>
 
               <div className="flex flex-col gap-2">
-                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase">Select AI Provider</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Select AI Provider</label>
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setAiProviderInput('gemini')}
-                    className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${aiProviderInput === 'gemini' ? 'bg-primary/20 border-primary text-primary font-bold' : 'bg-surface border-outline-variant/30 text-on-surface-variant'}`}
+                    className={`py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 ${aiProviderInput === 'gemini' ? 'bg-primary/20 border-primary text-primary shadow-sm' : 'bg-surface border-outline-variant/30 text-on-surface-variant hover:border-outline-variant'}`}
                   >
-                    Google Gemini (Free)
+                    <span>Google Gemini (Free)</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setAiProviderInput('openrouter')}
-                    className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${aiProviderInput === 'openrouter' ? 'bg-primary/20 border-primary text-primary font-bold' : 'bg-surface border-outline-variant/30 text-on-surface-variant'}`}
+                    className={`py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 ${aiProviderInput === 'openrouter' ? 'bg-primary/20 border-primary text-primary shadow-sm' : 'bg-surface border-outline-variant/30 text-on-surface-variant hover:border-outline-variant'}`}
                   >
-                    OpenRouter
+                    <span>OpenRouter</span>
                   </button>
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase">API Key</label>
+                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase tracking-wider">API Key</label>
                 <input
                   type="password"
                   placeholder={aiProviderInput === 'gemini' ? 'AIzaSy...' : 'sk-or-v1-...'}
                   value={aiKeyInput}
                   onChange={(e) => setAiKeyInput(e.target.value)}
-                  className="w-full bg-surface border border-outline-variant/40 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary"
+                  className="w-full bg-surface border border-outline-variant/40 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-mono transition-all"
                 />
-                <span className="text-[11px] text-on-surface-variant">
+                <span className="text-[12px] text-on-surface-variant">
                   {aiProviderInput === 'gemini' ? 'Get a free key from Google AI Studio (aistudio.google.com).' : 'Get a key from openrouter.ai/keys.'}
                 </span>
               </div>
 
-              <div className="flex items-center justify-end gap-2 mt-2">
+              <div className="flex items-center justify-end gap-3 mt-4 pt-2 border-t border-outline-variant/20">
                 {hasCustomKey && (
                   <button
                     type="button"
@@ -411,7 +412,7 @@ export default function DashboardPage() {
                       setShowAiModal(false);
                       window.location.reload();
                     }}
-                    className="px-4 py-2 rounded-lg bg-error/20 text-error text-sm font-semibold hover:bg-error/30 transition-colors"
+                    className="px-4 py-2.5 rounded-xl bg-error/15 text-error text-sm font-semibold hover:bg-error/25 transition-colors"
                   >
                     Remove Key
                   </button>
@@ -427,13 +428,14 @@ export default function DashboardPage() {
                     setShowAiModal(false);
                     window.location.reload();
                   }}
-                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-sm font-bold shadow-md hover:opacity-90 transition-all"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-sm font-bold shadow-lg hover:opacity-95 transition-all"
                 >
                   Save & Activate AI
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </>

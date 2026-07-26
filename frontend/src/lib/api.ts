@@ -15,6 +15,16 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  if (typeof window !== 'undefined') {
+    const aiKey = localStorage.getItem('spendsense_ai_key');
+    const aiProvider = localStorage.getItem('spendsense_ai_provider');
+    if (aiKey) {
+      config.headers['X-AI-API-Key'] = aiKey;
+    }
+    if (aiProvider) {
+      config.headers['X-AI-Provider'] = aiProvider;
+    }
+  }
   return config;
 });
 
