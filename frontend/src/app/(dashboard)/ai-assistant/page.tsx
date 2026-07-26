@@ -206,19 +206,19 @@ export default function AiAssistantPage() {
 
         {/* Empty State */}
         {messages.length === 0 ? (
-          <div className="flex flex-col justify-center flex-1 w-full gap-4 text-center py-8 my-auto animate-fade-in">
+          <div className="flex flex-col justify-center flex-1 gap-4 text-center py-8 my-auto animate-fade-in" style={{ width: '100%', minWidth: '100%' }}>
             <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-tr from-primary/20 via-secondary/20 to-tertiary/20 flex items-center justify-center mb-1 shadow-inner border border-outline-variant/20">
               <span className="material-symbols-outlined text-primary text-[44px]">auto_awesome</span>
             </div>
-            <h2 className="text-xl md:text-2xl text-on-surface font-bold max-w-[32rem] mx-auto w-full">
+            <h2 className="text-xl md:text-2xl text-on-surface font-bold mx-auto" style={{ width: '100%', maxWidth: '32rem' }}>
               How can I help you optimize your money today?
             </h2>
-            <p className="font-body-md text-sm text-on-surface-variant max-w-[28rem] mx-auto w-full">
+            <p className="font-body-md text-sm text-on-surface-variant mx-auto" style={{ width: '100%', maxWidth: '28rem' }}>
               Ask me questions about your spending trends, hidden subscription leaks, or custom budgeting strategies.
             </p>
 
             {/* Prompt Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl mt-4 mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 mx-auto" style={{ width: '100%', maxWidth: '42rem' }}>
               {SUGGESTED_PROMPTS.map((item, idx) => (
                 <button
                   key={idx}
