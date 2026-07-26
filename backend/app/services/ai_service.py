@@ -9,7 +9,7 @@ from app.repositories.transaction_repo import TransactionRepository
 
 
 class AIService:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, api_key: str | None = None, provider: str | None = None):
         self.db = db
         self.txn_repo = TransactionRepository(db)
         self.openai_key = os.getenv("OPENAI_API_KEY")
@@ -19,13 +19,30 @@ class AIService:
         self.client = None
         self.model = "gpt-4o-mini"
         
-        if self.openrouter_key:
+        # 1. Prioritize user-provided API key from frontend
+        if api_key:
+            if provider == "gemini" or api_key.startswith("AIza"):
+                self.client = AsyncOpenAI(
+                    api_key=api_key,
+                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+                )
+                self.model = "gemini-1.5-flash"
+            elif provider == "openrouter" or api_key.startswith("sk-or-"):
+                self.client = AsyncOpenAI(
+                    api_key=api_key,
+                    base_url="https://openrouter.ai/api/v1",
+                )
+                self.model = "google/gemini-2.0-flash-lite-001"
+            else:
+                self.client = AsyncOpenAI(api_key=api_key)
+                self.model = "gpt-4o-mini"
+        # 2. Fallback to server environment variables
+        elif self.openrouter_key:
             self.client = AsyncOpenAI(
                 api_key=self.openrouter_key,
                 base_url="https://openrouter.ai/api/v1",
             )
-            # You can set a specific model via OPENROUTER_MODEL env var or default to haiku
-            self.model = os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-haiku")
+            self.model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-lite-001")
         elif self.gemini_key:
             self.client = AsyncOpenAI(
                 api_key=self.gemini_key,
@@ -84,14 +101,43 @@ class AIService:
 
     async def get_insights(self, user_id: uuid.UUID) -> list[dict]:
         if not self.client:
-            return [{
-                "id": str(uuid.uuid4()),
-                "title": "Food spending is your top category",
-                "description": "You spent the most on food this month. Consider setting a budget.",
-                "type": "spending_pattern",
-                "severity": "info",
-                "created_at": "2024-01-01T00:00:00Z",
-            }]
+            recent_result = await self.txn_repo.list_filtered(user_id, page=1, size=100)
+            txns = recent_result[0]
+            if not txns:
+                return [{
+                    "id": str(uuid.uuid4()),
+                    "title": "⚡ Welcome to AI Insights!",
+                    "description": "Add your Gemini or OpenRouter API key above, or add transactions to start generating live financial advice.",
+                    "type": "spending_pattern",
+                    "severity": "info",
+                    "created_at": "2026-07-26T00:00:00Z",
+                }]
+            
+            cat_totals = {}
+            for t in txns:
+                cat_name = t.category.name if t.category else "General"
+                cat_totals[cat_name] = cat_totals.get(cat_name, 0) + t.amount
+            
+            top_cat = max(cat_totals.items(), key=lambda x: x[1]) if cat_totals else ("General", 0)
+            
+            return [
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": f"{top_cat[0]} is your top category",
+                    "description": f"You've spent ₹{top_cat[1]:,.0f} on {top_cat[0]} recently. Set a monthly limit to increase your savings.",
+                    "type": "spending_pattern",
+                    "severity": "info",
+                    "created_at": "2026-07-26T00:00:00Z",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "title": "🔑 Connect Gemini or OpenRouter Key",
+                    "description": "Click 'Configure AI' in dashboard to unlock deep AI subscription leak detection and predictive savings.",
+                    "type": "savings_opportunity",
+                    "severity": "info",
+                    "created_at": "2026-07-26T00:00:00Z",
+                }
+            ]
             
         context = await self._get_txn_context(user_id, 50)
         prompt = (

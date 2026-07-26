@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { useDashboardAnalytics, useCategoryBreakdown, useTrends } from '@/hooks/useAnalytics';
 import { useInsights } from '@/hooks/useAI';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -11,6 +12,23 @@ export default function DashboardPage() {
   const { data: categoryData, isLoading: isCategoryLoading } = useCategoryBreakdown();
   const { data: trendsData, isLoading: isTrendsLoading } = useTrends('6m');
   const { data: insightsData, isLoading: isInsightsLoading } = useInsights();
+
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiKeyInput, setAiKeyInput] = useState('');
+  const [aiProviderInput, setAiProviderInput] = useState('gemini');
+  const [hasCustomKey, setHasCustomKey] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedKey = localStorage.getItem('spendsense_ai_key');
+      const savedProvider = localStorage.getItem('spendsense_ai_provider');
+      if (savedKey) {
+        setHasCustomKey(true);
+        setAiKeyInput(savedKey);
+        setAiProviderInput(savedProvider || 'gemini');
+      }
+    }
+  }, []);
 
   if (isDashboardLoading || isCategoryLoading || isTrendsLoading || isInsightsLoading) {
     return (
@@ -136,33 +154,34 @@ export default function DashboardPage() {
             <div className="w-full h-[300px] mt-auto relative">
               {trendsData?.items && trendsData.items.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={trendsData.items} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={[...trendsData.items].sort((a, b) => a.period.localeCompare(b.period))} margin={{ top: 15, right: 15, left: -10, bottom: 5 }}>
                     <defs>
                       <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.6}/>
+                        <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--outline-variant)" opacity={0.2} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.4} />
                     <XAxis 
                       dataKey="period" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: 'var(--on-surface-variant)', fontSize: 12 }} 
+                      tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }} 
                       dy={10}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: 'var(--on-surface-variant)', fontSize: 12 }} 
+                      tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }} 
                       tickFormatter={(value) => `₹${value.toLocaleString()}`}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: 'var(--surface-container-high)', borderRadius: '8px', border: 'none', color: 'var(--on-surface)' }}
-                      itemStyle={{ color: 'var(--primary)' }}
+                      contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', border: '1px solid #334155', color: '#f8fafc', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}
+                      itemStyle={{ color: '#38bdf8', fontWeight: 600 }}
                       formatter={(value: any) => [`₹${Number(value || 0).toLocaleString()}`, 'Spent']}
+                      labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
                     />
-                    <Area type="monotone" dataKey="total" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" />
+                    <Area type="monotone" dataKey="total" stroke="#38bdf8" strokeWidth={4} fillOpacity={1} fill="url(#colorTotal)" />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
@@ -226,11 +245,20 @@ export default function DashboardPage() {
             </div>
 
             <div className="bg-surface-container rounded-xl p-md shadow-sm flex flex-col flex-1">
-              <div className="flex items-center gap-sm mb-md">
-                <div className="p-xs bg-primary/20 rounded-md">
-                  <span className="material-symbols-outlined text-primary text-[20px]">smart_toy</span>
+              <div className="flex items-center justify-between mb-md">
+                <div className="flex items-center gap-sm">
+                  <div className="p-xs bg-primary/20 rounded-md">
+                    <span className="material-symbols-outlined text-primary text-[20px]">smart_toy</span>
+                  </div>
+                  <h2 className="font-headline-md text-[18px] font-semibold text-on-surface">AI Insights</h2>
                 </div>
-                <h2 className="font-headline-md text-[18px] font-semibold text-on-surface">AI Insights</h2>
+                <button
+                  onClick={() => setShowAiModal(true)}
+                  className="px-3 py-1 rounded-full bg-surface-container-high hover:bg-primary/20 text-xs font-semibold text-primary transition-all flex items-center gap-1 border border-primary/30 shadow-sm"
+                >
+                  <span className="material-symbols-outlined text-[14px]">key</span>
+                  {hasCustomKey ? 'AI Active (Custom Key)' : 'Configure AI Key'}
+                </button>
               </div>
               <div className="flex flex-col gap-sm">
                 {insightsData?.insights && insightsData.insights.length > 0 ? (
@@ -258,6 +286,93 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {showAiModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="bg-surface-container-high border border-outline-variant/30 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 relative">
+              <button onClick={() => setShowAiModal(false)} className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              
+              <div className="flex items-center gap-2 text-primary">
+                <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
+                <h3 className="font-headline-md text-lg font-bold text-on-surface">Connect Live AI Copilot</h3>
+              </div>
+              
+              <p className="font-body-md text-sm text-on-surface-variant">
+                Enter your free Gemini or OpenRouter API key to activate deep real-time financial analysis and subscription leak detection.
+              </p>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase">Select AI Provider</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAiProviderInput('gemini')}
+                    className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${aiProviderInput === 'gemini' ? 'bg-primary/20 border-primary text-primary font-bold' : 'bg-surface border-outline-variant/30 text-on-surface-variant'}`}
+                  >
+                    Google Gemini (Free)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAiProviderInput('openrouter')}
+                    className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${aiProviderInput === 'openrouter' ? 'bg-primary/20 border-primary text-primary font-bold' : 'bg-surface border-outline-variant/30 text-on-surface-variant'}`}
+                  >
+                    OpenRouter
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-label-md text-xs font-semibold text-on-surface-variant uppercase">API Key</label>
+                <input
+                  type="password"
+                  placeholder={aiProviderInput === 'gemini' ? 'AIzaSy...' : 'sk-or-v1-...'}
+                  value={aiKeyInput}
+                  onChange={(e) => setAiKeyInput(e.target.value)}
+                  className="w-full bg-surface border border-outline-variant/40 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary"
+                />
+                <span className="text-[11px] text-on-surface-variant">
+                  {aiProviderInput === 'gemini' ? 'Get a free key from Google AI Studio (aistudio.google.com).' : 'Get a key from openrouter.ai/keys.'}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 mt-2">
+                {hasCustomKey && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      localStorage.removeItem('spendsense_ai_key');
+                      localStorage.removeItem('spendsense_ai_provider');
+                      setHasCustomKey(false);
+                      setAiKeyInput('');
+                      setShowAiModal(false);
+                      window.location.reload();
+                    }}
+                    className="px-4 py-2 rounded-lg bg-error/20 text-error text-sm font-semibold hover:bg-error/30 transition-colors"
+                  >
+                    Remove Key
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (aiKeyInput.trim()) {
+                      localStorage.setItem('spendsense_ai_key', aiKeyInput.trim());
+                      localStorage.setItem('spendsense_ai_provider', aiProviderInput);
+                      setHasCustomKey(true);
+                    }
+                    setShowAiModal(false);
+                    window.location.reload();
+                  }}
+                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-sm font-bold shadow-md hover:opacity-90 transition-all"
+                >
+                  Save & Activate AI
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
