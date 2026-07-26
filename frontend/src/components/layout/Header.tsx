@@ -40,14 +40,14 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] transition-colors group-focus-within:text-primary">
             search
           </span>
-          <form onSubmit={(e) => { e.preventDefault(); console.log("Search query submitted"); }}>
-            <input
-              className="w-full bg-surface-container-highest/50 border-none rounded-full py-base pl-12 pr-md text-body-md focus:ring-1 focus:ring-primary outline-none transition-all"
-              placeholder="Search transactions..."
-              type="text"
-            />
-          </form>
-        </div>
+          <input
+            className="w-full bg-surface-container-highest/50 border-none rounded-full py-base pl-12 pr-md text-body-md focus:ring-1 focus:ring-primary outline-none transition-all"
+            placeholder="Search transactions..."
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
       </div>
       <div className="flex items-center gap-md">
         <div 

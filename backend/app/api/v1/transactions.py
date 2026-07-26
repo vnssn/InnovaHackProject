@@ -66,7 +66,7 @@ def transaction_to_out(t):
 @router.get("", response_model=PaginatedTransactions)
 async def list_transactions(
     page: int = Query(1, ge=1),
-    size: int = Query(20, ge=1, le=100),
+    size: int = Query(20, ge=1, le=5000),
     sort_by: str = "transaction_date",
     sort_order: str = "desc",
     search: str | None = None,

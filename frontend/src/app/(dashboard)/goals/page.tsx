@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useGoals, useCreateGoal } from '@/hooks/useGoals';
 
 export default function GoalsPage() {
-  const queryClient = useQueryClient();
   const { data: goalsData, isLoading } = useGoals();
   const createGoal = useCreateGoal();
   const goals = goalsData?.items || [];

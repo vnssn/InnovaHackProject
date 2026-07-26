@@ -57,25 +57,6 @@ export default function BudgetsPage() {
 
   const currentMonth = new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
-  const addMutation = useMutation({
-    mutationFn: (data: { category_id: string; monthly_limit: number }) => api.post('/budgets', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] });
-      setIsAddModalOpen(false);
-      setAddForm({ category_id: '', monthly_limit: '' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.delete(`/budgets/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['budgets'] }),
-  });
-
-  const handleAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addMutation.mutate({ category_id: addForm.category_id, monthly_limit: parseFloat(addForm.monthly_limit) });
-  };
-
   return (
     <>
       <div className="flex flex-col w-full gap-xl py-xl relative">

@@ -1,11 +1,12 @@
 import uuid
 from datetime import datetime, timezone, timedelta
 
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select, text, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.models.merchant import Merchant
+from app.models.category import Category
 from app.models.transaction import Transaction
 from app.repositories.base import BaseRepository
 
@@ -37,9 +38,21 @@ class TransactionRepository(BaseRepository[Transaction]):
             joinedload(Transaction.category),
         ).where(Transaction.user_id == user_id)
 
+        if search or city:
+            query = query.outerjoin(Merchant, Transaction.merchant_id == Merchant.id)
         if search:
-            query = query.join(Merchant, Transaction.merchant_id == Merchant.id, isouter=True).where(
-                func.lower(Merchant.name).like(f"%{search.lower()}%")
+            query = query.outerjoin(Category, Transaction.category_id == Category.id)
+            search_term = f"%{search.lower()}%"
+            query = query.where(
+                or_(
+                    func.lower(Transaction.description).like(search_term),
+                    func.lower(Transaction.provider).like(search_term),
+                    func.lower(Transaction.reference_number).like(search_term),
+                    func.lower(Transaction.payment_method).like(search_term),
+                    func.lower(Merchant.name).like(search_term),
+                    func.lower(Merchant.city).like(search_term),
+                    func.lower(Category.name).like(search_term),
+                )
             )
         if merchant_id:
             query = query.where(Transaction.merchant_id == merchant_id)
@@ -48,7 +61,7 @@ class TransactionRepository(BaseRepository[Transaction]):
         if provider:
             query = query.where(Transaction.provider == provider)
         if city:
-            query = query.join(Merchant, Transaction.merchant_id == Merchant.id, isouter=True).where(
+            query = query.where(
                 func.lower(Merchant.city) == city.lower()
             )
         if status:

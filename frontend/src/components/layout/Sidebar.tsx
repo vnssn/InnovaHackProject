@@ -27,12 +27,6 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
     { name: "Financial Replay", path: "/financial-replay", icon: "history" },
   ];
 
-  const handleLogout = async () => {
-    await logout();
-    clearAuth();
-    router.push('/login');
-  };
-
   return (
     <>
       {isOpen && (

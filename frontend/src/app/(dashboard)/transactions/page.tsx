@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTransactions, useAddTransaction, TransactionFilters } from '@/hooks/useTransactions';
+import { api } from '@/lib/api';
 
 export default function TransactionsPage() {
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -13,6 +14,7 @@ export default function TransactionsPage() {
   const [selectedTxnId, setSelectedTxnId] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [addForm, setAddForm] = useState({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+  const [isExporting, setIsExporting] = useState(false);
 
   const addMutation = useAddTransaction();
 
@@ -25,6 +27,53 @@ export default function TransactionsPage() {
     });
     setIsAddModalOpen(false);
     setAddForm({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      setIsExporting(true);
+      const response = await api.get('/transactions', { 
+        params: { 
+          page: 1, 
+          size: 5000, 
+          search: filters.search || undefined,
+          sort_by: 'transaction_date', 
+          sort_order: 'desc' 
+        } 
+      });
+      const items = response.data?.items || [];
+      if (items.length === 0) {
+        alert("No transactions available to export.");
+        return;
+      }
+
+      const headers = ["ID", "Date", "Description", "Merchant", "Category", "Amount", "Status", "Payment Method", "Provider"];
+      const rows = items.map((t: any) => [
+        t.id || "",
+        t.transaction_date ? new Date(t.transaction_date).toLocaleDateString() : "",
+        `"${(t.description || "").replace(/"/g, '""')}"`,
+        `"${(t.merchant_name || t.provider || "General").replace(/"/g, '""')}"`,
+        `"${(t.category_name || "Uncategorized").replace(/"/g, '""')}"`,
+        t.amount || 0,
+        t.status || "completed",
+        t.payment_method || "UPI",
+        t.provider || "SpendSense"
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r: any) => r.join(","))].join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `spendsense_transactions_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Failed to export CSV:", err);
+      alert("Failed to generate CSV report. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const { data: transactionsData, isLoading } = useTransactions(filters);
@@ -40,9 +89,13 @@ export default function TransactionsPage() {
             <p className="font-body-lg text-body-lg text-on-surface-variant">Review and manage your financial activity across all linked accounts.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button onClick={() => alert("CSV Export feature coming soon!")} className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20">
-              <span className="material-symbols-outlined text-[18px]">download</span>
-              Export CSV
+            <button 
+              onClick={handleExportCSV} 
+              disabled={isExporting}
+              className="bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-sm backdrop-blur-md border border-outline-variant/20 disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-[18px]">{isExporting ? 'sync' : 'download'}</span>
+              {isExporting ? 'Exporting...' : 'Export CSV'}
             </button>
             <button onClick={() => setIsAddModalOpen(true)} className="bg-primary hover:bg-primary-fixed text-on-primary font-label-md text-label-md px-md py-sm rounded-lg transition-colors flex items-center gap-sm shadow-md">
               <span className="material-symbols-outlined text-[18px]">add</span>
