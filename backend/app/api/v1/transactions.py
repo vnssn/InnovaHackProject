@@ -18,6 +18,9 @@ from app.schemas.transaction import (
     TransactionCreate,
 )
 from app.utils.pagination import paginate
+from sqlalchemy import select
+from app.models.merchant import Merchant
+from app.utils.geo import get_city_coordinates
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
@@ -29,6 +32,27 @@ async def create_transaction(
 ):
     repo = TransactionRepository(db)
     cat_id = uuid.UUID(body.category_id) if body.category_id else None
+    
+    merchant_id = None
+    if body.city or body.locality:
+        city_name = body.city or body.locality
+        lat, lng = get_city_coordinates(city_name)
+        m_name = body.description or city_name or "General Store"
+        res = await db.execute(select(Merchant).where(Merchant.name == m_name, Merchant.city == city_name.title()))
+        existing_m = res.scalar_one_or_none()
+        if not existing_m:
+            existing_m = Merchant(
+                name=m_name,
+                category_id=cat_id,
+                lat=lat,
+                lng=lng,
+                city=city_name.title(),
+                locality=body.locality.title() if body.locality else city_name.title()
+            )
+            db.add(existing_m)
+            await db.flush()
+        merchant_id = existing_m.id
+        
     t = await repo.create(
         user_id=user.id,
         amount=body.amount,
@@ -37,6 +61,7 @@ async def create_transaction(
         provider=body.provider,
         status=body.status,
         category_id=cat_id,
+        merchant_id=merchant_id,
         reference_number=str(uuid.uuid4())[:8].upper()
     )
     return transaction_to_out(t)

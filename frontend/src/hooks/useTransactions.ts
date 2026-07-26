@@ -26,13 +26,14 @@ export const useTransactions = (filters: TransactionFilters) => {
 export const useAddTransaction = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { amount: number; description: string; transaction_date: string; category_id?: string }) => {
+    mutationFn: async (data: { amount: number; description: string; transaction_date: string; category_id?: string; city?: string }) => {
       const response = await api.post('/transactions', data);
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['locations'] });
     },
   });
 };

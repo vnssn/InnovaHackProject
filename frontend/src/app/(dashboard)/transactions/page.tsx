@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTransactions, useAddTransaction, TransactionFilters } from '@/hooks/useTransactions';
+import { useLocationCities } from '@/hooks/useLocations';
 import { api } from '@/lib/api';
 
 export default function TransactionsPage() {
@@ -13,7 +14,7 @@ export default function TransactionsPage() {
 
   const [selectedTxnId, setSelectedTxnId] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [addForm, setAddForm] = useState({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+  const [addForm, setAddForm] = useState({ amount: '', description: '', city: '', transaction_date: new Date().toISOString().slice(0, 16) });
   const [isExporting, setIsExporting] = useState(false);
 
   const addMutation = useAddTransaction();
@@ -23,10 +24,11 @@ export default function TransactionsPage() {
     await addMutation.mutateAsync({
       amount: parseFloat(addForm.amount),
       description: addForm.description,
+      city: addForm.city ? addForm.city.trim() : undefined,
       transaction_date: new Date(addForm.transaction_date).toISOString(),
     });
     setIsAddModalOpen(false);
-    setAddForm({ amount: '', description: '', transaction_date: new Date().toISOString().slice(0, 16) });
+    setAddForm({ amount: '', description: '', city: '', transaction_date: new Date().toISOString().slice(0, 16) });
   };
 
   const handleExportCSV = async () => {
@@ -78,10 +80,42 @@ export default function TransactionsPage() {
 
   const { data: transactionsData, isLoading } = useTransactions(filters);
   const selectedTxn = transactionsData?.items?.find((t: any) => t.id === selectedTxnId);
+  const { data: citiesData } = useLocationCities();
+  const topCity = citiesData?.items?.[0];
 
   return (
     <>
       <div className="flex flex-col w-full h-full p-md gap-lg">
+
+        {topCity && (
+          <div className="w-full bg-gradient-to-r from-primary/15 via-surface-container-high to-surface-container border border-primary/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                <span className="material-symbols-outlined text-[28px]">location_city</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-label-sm uppercase tracking-wider text-primary font-bold">Location Intelligence Insight</span>
+                  <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wide">Top Expenditure Zone</span>
+                </div>
+                <h3 className="font-headline-md text-lg font-bold text-on-surface mt-0.5">
+                  Highest Expenditure City: <span className="text-primary underline decoration-primary/40 underline-offset-4">{topCity.city || 'Unknown'}</span>
+                </h3>
+              </div>
+            </div>
+            <div className="flex items-center gap-6 bg-surface/60 px-5 py-2.5 rounded-xl border border-outline-variant/20 shrink-0">
+              <div className="flex flex-col text-right">
+                <span className="text-xs text-on-surface-variant font-medium">Total Spend in {topCity.city}</span>
+                <span className="font-headline-md text-lg font-bold text-on-surface">₹{topCity.total?.toLocaleString()}</span>
+              </div>
+              <div className="h-8 w-[1px] bg-outline-variant/30"></div>
+              <div className="flex flex-col text-right">
+                <span className="text-xs text-on-surface-variant font-medium">Share of Total</span>
+                <span className="font-headline-md text-lg font-bold text-secondary-fixed">{topCity.percentage?.toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-md z-20">
           <div className="flex flex-col gap-xs">
@@ -183,7 +217,15 @@ export default function TransactionsPage() {
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="font-body-md text-body-md text-on-surface font-semibold truncate">{txn.merchant_name || txn.description}</span>
-                            <span className="font-label-sm text-label-sm text-on-surface-variant truncate">{txn.provider}</span>
+                            <span className="font-label-sm text-label-sm text-on-surface-variant truncate flex items-center gap-1">
+                              <span>{txn.provider}</span>
+                              {txn.city && (
+                                <span className="inline-flex items-center gap-0.5 text-primary ml-1 px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-[11px] font-semibold">
+                                  <span className="material-symbols-outlined text-[12px]">location_on</span>
+                                  {txn.city}
+                                </span>
+                              )}
+                            </span>
                           </div>
                         </div>
                       </td>
@@ -296,6 +338,14 @@ export default function TransactionsPage() {
               <div className="flex flex-col gap-xs">
                 <label className="font-label-md text-on-surface">Description / Merchant</label>
                 <input required type="text" value={addForm.description} onChange={e => setAddForm({...addForm, description: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Groceries" />
+              </div>
+
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-on-surface flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px] text-primary">location_on</span>
+                  <span>Location (City)</span>
+                </label>
+                <input type="text" value={addForm.city || ''} onChange={e => setAddForm({...addForm, city: e.target.value})} className="bg-surface-container-highest p-sm rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Mumbai, Bengaluru, Delhi, London..." />
               </div>
 
               <div className="flex flex-col gap-xs">

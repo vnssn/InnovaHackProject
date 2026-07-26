@@ -14,6 +14,8 @@ class TransactionCreate(BaseModel):
     provider: str = "manual"
     status: str = "completed"
     category_id: str | None = None
+    city: str | None = None
+    locality: str | None = None
 
 
 class TransactionOut(BaseModel):
