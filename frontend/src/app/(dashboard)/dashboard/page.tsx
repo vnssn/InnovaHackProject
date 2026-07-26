@@ -160,7 +160,7 @@ export default function DashboardPage() {
                     <Tooltip 
                       contentStyle={{ backgroundColor: 'var(--surface-container-high)', borderRadius: '8px', border: 'none', color: 'var(--on-surface)' }}
                       itemStyle={{ color: 'var(--primary)' }}
-                      formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Spent']}
+                      formatter={(value: any) => [`₹${Number(value || 0).toLocaleString()}`, 'Spent']}
                     />
                     <Area type="monotone" dataKey="total" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" />
                   </AreaChart>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                           ))}
                         </Pie>
                         <Tooltip 
-                          formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Spent']}
+                          formatter={(value: any) => [`₹${Number(value || 0).toLocaleString()}`, 'Spent']}
                           contentStyle={{ backgroundColor: 'var(--surface-container-high)', borderRadius: '8px', border: 'none', color: 'var(--on-surface)' }}
                         />
                       </PieChart>

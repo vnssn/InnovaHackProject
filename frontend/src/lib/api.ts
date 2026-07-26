@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
 export const api = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -26,7 +28,7 @@ api.interceptors.response.use(
       
       if (refreshToken) {
         try {
-          const response = await axios.post('http://localhost:8000/api/v1/auth/refresh', { refresh_token: refreshToken });
+          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken });
           const { access_token, refresh_token: new_refresh_token } = response.data;
           
           setAuth(access_token, new_refresh_token, user || undefined);
