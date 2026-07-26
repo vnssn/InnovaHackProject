@@ -21,17 +21,17 @@ export default function Home() {
         
         <nav className="hidden md:flex items-center gap-8">
           <Link href="#features" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Features</Link>
-          <Link href="#ai" className="text-sm font-medium text-white/70 hover:text-white transition-colors">AI Insights</Link>
-          <Link href="#pricing" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Pricing</Link>
-          <Link href="#about" className="text-sm font-medium text-white/70 hover:text-white transition-colors">About</Link>
+          <Link href="#how-it-works" className="text-sm font-medium text-white/70 hover:text-white transition-colors">How It Works</Link>
+          <Link href="#why-spendsense" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Why SpendSense</Link>
+          <Link href="#contact" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Contact</Link>
         </nav>
 
         <nav className="flex items-center gap-4">
           <Link href="/login" className="px-4 py-2 font-label-md text-sm font-medium text-white/80 hover:text-white transition-colors hidden sm:block">
             Log In
           </Link>
-          <Link href="/signup" className="px-5 py-2.5 rounded-full bg-white text-[#0B1120] font-label-md text-sm font-semibold hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all hover:scale-105">
-            Get Started
+          <Link href="/login" className="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-label-md text-sm font-semibold hover:opacity-90 shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all hover:scale-105">
+            Start Free Trial
           </Link>
         </nav>
       </header>
@@ -60,8 +60,8 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <Link href="/signup" className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-label-md text-base font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-[0_0_40px_rgba(56,189,248,0.4)] hover:shadow-[0_0_60px_rgba(56,189,248,0.6)] hover:-translate-y-1">
-            Start Free
+          <Link href="/login" className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-label-md text-base font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-[0_0_40px_rgba(56,189,248,0.4)] hover:shadow-[0_0_60px_rgba(56,189,248,0.6)] hover:-translate-y-1">
+            Start Free Trial
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
           </Link>
           <Link href="#demo" className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 text-white font-label-md text-base font-medium transition-all text-center flex items-center gap-2">
@@ -166,8 +166,8 @@ export default function Home() {
           </h2>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-            <Link href="/signup" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#0B1120] font-label-md text-base font-bold hover:scale-105 transition-all shadow-lg">
-              Start Free
+            <Link href="/login" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#0B1120] font-label-md text-base font-bold hover:scale-105 transition-all shadow-lg">
+              Start Free Trial
             </Link>
             <Link href="#demo" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-label-md text-base font-medium transition-all backdrop-blur-md">
               Book Demo
