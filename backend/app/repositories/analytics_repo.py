@@ -14,10 +14,13 @@ class AnalyticsRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_dashboard(self, user_id: uuid.UUID) -> dict:
+    async def get_dashboard(self, user_id: uuid.UUID, days: int | None = None) -> dict:
         now = datetime.now(timezone.utc)
-        # Start of current month
-        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        # Start of selected period (default current month)
+        if days and days > 0:
+            start_of_month = now - timedelta(days=days)
+        else:
+            start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         # Start of today
         start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
         # Start of last month
@@ -120,39 +123,77 @@ class AnalyticsRepository:
             "spending_change_pct": spending_change,
         }
 
-    async def get_category_breakdown(self, user_id: uuid.UUID) -> list[dict]:
+    async def get_category_breakdown(self, user_id: uuid.UUID, days: int | None = None) -> list[dict]:
         now = datetime.now(timezone.utc)
-        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if days and days > 0:
+            start_time = now - timedelta(days=days)
+        else:
+            start_time = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-        result = await self.db.execute(
-            select(
-                Category.id,
-                Category.name,
-                Category.color,
-                func.coalesce(func.sum(Transaction.amount), 0).label("total"),
-                func.count(Transaction.id).label("txn_count"),
-            )
-            .join(Transaction, Transaction.category_id == Category.id, isouter=True)
-            .where(
-                Transaction.user_id == user_id,
-                Transaction.transaction_date >= start_of_month,
-            )
-            .group_by(Category.id, Category.name, Category.color)
-            .order_by(text("total desc"))
-        )
-        rows = result.all()
-        grand_total = sum(float(r[3] or 0) for r in rows) or 1
-        return [
-            {
-                "category_id": str(r[0]),
-                "category_name": r[1],
-                "total": float(r[3] or 0),
-                "percentage": round(float(r[3] or 0) / grand_total * 100, 1),
-                "transaction_count": r[4],
-                "color": r[2],
-            }
-            for r in rows
+        # Fetch all database categories
+        cat_result = await self.db.execute(select(Category))
+        categories = cat_result.scalars().all()
+
+        # Standard categories guaranteed to appear as requested
+        standard_cats = [
+            {"name": "Food & Dining", "color": "#f87171"},
+            {"name": "Lifestyle", "color": "#a855f7"},
+            {"name": "Medicine & Health", "color": "#10b981"},
+            {"name": "Shopping", "color": "#38bdf8"},
+            {"name": "Bills & Utilities", "color": "#fbbf24"},
+            {"name": "Entertainment", "color": "#ec4899"},
+            {"name": "Transportation", "color": "#6366f1"},
+            {"name": "Education", "color": "#14b8a6"},
         ]
+
+        # Fetch user transactions in this period
+        txns_result = await self.db.execute(
+            select(Transaction).where(
+                Transaction.user_id == user_id,
+                Transaction.transaction_date >= start_time,
+            )
+        )
+        txns = txns_result.scalars().all()
+
+        # Aggregate amounts and counts by category id
+        totals = {}
+        counts = {}
+        for t in txns:
+            cid = str(t.category_id) if t.category_id else "general"
+            totals[cid] = totals.get(cid, 0.0) + float(t.amount)
+            counts[cid] = counts.get(cid, 0) + 1
+
+        grand_total = sum(totals.values()) or 1.0
+        items = []
+        seen_names = set()
+
+        for c in categories:
+            cid = str(c.id)
+            tot = totals.get(cid, 0.0)
+            seen_names.add(c.name.lower())
+            items.append({
+                "category_id": cid,
+                "category_name": c.name,
+                "total": tot,
+                "percentage": round(tot / grand_total * 100, 1),
+                "transaction_count": counts.get(cid, 0),
+                "color": c.color or "#38bdf8",
+            })
+
+        for sc in standard_cats:
+            if not any(sc["name"].lower() in name for name in seen_names):
+                items.append({
+                    "category_id": str(uuid.uuid4()),
+                    "category_name": sc["name"],
+                    "total": 0.0,
+                    "percentage": 0.0,
+                    "transaction_count": 0,
+                    "color": sc["color"],
+                })
+
+        # Sort by total descending, but keep alphabetical order as tiebreaker
+        items.sort(key=lambda x: (-x["total"], x["category_name"]))
+        return items
 
     async def get_trends(self, user_id: uuid.UUID, period: str = "6m", category_id: uuid.UUID | None = None) -> list[dict]:
         months_map = {"1m": 1, "3m": 3, "6m": 6, "1y": 12}

@@ -11,21 +11,25 @@ export const useOverviewAnalytics = () => {
   });
 };
 
-export const useDashboardAnalytics = () => {
+export const useDashboardAnalytics = (days?: number) => {
   return useQuery({
-    queryKey: ['analytics', 'dashboard'],
+    queryKey: ['analytics', 'dashboard', days],
     queryFn: async () => {
-      const response = await api.get('/analytics/dashboard');
+      const response = await api.get('/analytics/dashboard', {
+        params: days ? { days } : undefined,
+      });
       return response.data;
     },
   });
 };
 
-export const useCategoryBreakdown = () => {
+export const useCategoryBreakdown = (days?: number) => {
   return useQuery({
-    queryKey: ['analytics', 'category-breakdown'],
+    queryKey: ['analytics', 'category-breakdown', days],
     queryFn: async () => {
-      const response = await api.get('/analytics/category-breakdown');
+      const response = await api.get('/analytics/category-breakdown', {
+        params: days ? { days } : undefined,
+      });
       return response.data;
     },
   });

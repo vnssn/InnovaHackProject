@@ -8,9 +8,14 @@ import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: dashboard, isLoading: isDashboardLoading } = useDashboardAnalytics();
-  const { data: categoryData, isLoading: isCategoryLoading } = useCategoryBreakdown();
-  const { data: trendsData, isLoading: isTrendsLoading } = useTrends('6m');
+  const [dateFilter, setDateFilter] = useState<'1d' | '7d' | '30d'>('30d');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  const filterDays = dateFilter === '1d' ? 1 : dateFilter === '7d' ? 7 : 30;
+
+  const { data: dashboard, isLoading: isDashboardLoading } = useDashboardAnalytics(filterDays);
+  const { data: categoryData, isLoading: isCategoryLoading } = useCategoryBreakdown(filterDays);
+  const { data: trendsData, isLoading: isTrendsLoading } = useTrends(dateFilter === '1d' ? '1m' : dateFilter === '7d' ? '3m' : '6m');
   const { data: insightsData, isLoading: isInsightsLoading } = useInsights();
 
   const [showAiModal, setShowAiModal] = useState(false);
@@ -68,10 +73,41 @@ export default function DashboardPage() {
             <p className="font-body-md text-body-md text-on-surface-variant">Here is a summary of your financial activity.</p>
           </div>
           <div className="flex items-center gap-sm">
-            <button onClick={() => alert("Date filtering coming soon")} className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs">
-              <span className="material-symbols-outlined text-[18px]">calendar_today</span>
-              Last 30 Days
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)} 
+                className="px-md py-sm bg-surface-container hover:bg-surface-container-high rounded-lg font-label-md text-label-md text-on-surface transition-colors flex items-center gap-xs border border-outline-variant/20 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                {dateFilter === '1d' ? 'Last 1 Day (24h)' : dateFilter === '7d' ? 'Last 7 Days' : 'Last 30 Days'}
+                <span className="material-symbols-outlined text-[16px]">expand_more</span>
+              </button>
+              {showFilterDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-xl py-1 z-50 animate-fade-in">
+                  <button
+                    onClick={() => { setDateFilter('1d'); setShowFilterDropdown(false); }}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-primary/10 flex items-center justify-between ${dateFilter === '1d' ? 'text-primary font-bold bg-primary/5' : 'text-on-surface'}`}
+                  >
+                    <span>1 Day (24 Hours)</span>
+                    {dateFilter === '1d' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                  </button>
+                  <button
+                    onClick={() => { setDateFilter('7d'); setShowFilterDropdown(false); }}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-primary/10 flex items-center justify-between ${dateFilter === '7d' ? 'text-primary font-bold bg-primary/5' : 'text-on-surface'}`}
+                  >
+                    <span>7 Days</span>
+                    {dateFilter === '7d' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                  </button>
+                  <button
+                    onClick={() => { setDateFilter('30d'); setShowFilterDropdown(false); }}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-primary/10 flex items-center justify-between ${dateFilter === '30d' ? 'text-primary font-bold bg-primary/5' : 'text-on-surface'}`}
+                  >
+                    <span>30 Days (1 Month)</span>
+                    {dateFilter === '30d' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                  </button>
+                </div>
+              )}
+            </div>
             <button onClick={() => router.push('/transactions')} className="px-md py-sm bg-primary hover:bg-primary-fixed rounded-lg font-label-md text-label-md text-on-primary shadow-sm transition-colors flex items-center gap-xs">
               <span className="material-symbols-outlined text-[18px]">add</span>
               Add Transaction
@@ -84,7 +120,9 @@ export default function DashboardPage() {
           <div className="bg-surface-container rounded-xl p-md shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl transition-transform group-hover:scale-110"></div>
             <div className="flex justify-between items-start mb-lg relative z-10">
-              <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Monthly Spend</span>
+              <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
+                {dateFilter === '1d' ? '24-Hour Spend' : dateFilter === '7d' ? '7-Day Spend' : '30-Day Spend'}
+              </span>
               <div className="p-xs bg-surface-container-highest rounded-md">
                 <span className="material-symbols-outlined text-on-surface-variant text-[20px]">account_balance_wallet</span>
               </div>
@@ -235,10 +273,13 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-md flex flex-col gap-sm">
-                {categoryData?.items?.slice(0, 4).map((cat: any) => (
+                {categoryData?.items?.slice(0, 8).map((cat: any) => (
                   <div key={cat.category_id} className="flex items-center justify-between font-label-md text-label-md">
-                    <div className="flex items-center gap-sm text-on-surface"><span className="w-3 h-3 rounded-full bg-primary" style={{ backgroundColor: cat.color }}></span>{cat.category_name}</div>
-                    <span className="text-on-surface-variant">{cat.percentage}%</span>
+                    <div className="flex items-center gap-sm text-on-surface">
+                      <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color || '#38bdf8' }}></span>
+                      <span className="truncate max-w-[130px]">{cat.category_name}</span>
+                    </div>
+                    <span className="text-on-surface-variant font-medium">₹{Number(cat.total || 0).toLocaleString()} ({cat.percentage || 0}%)</span>
                   </div>
                 ))}
               </div>
@@ -263,7 +304,17 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-sm">
                 {insightsData?.insights && insightsData.insights.length > 0 ? (
                   insightsData.insights.slice(0, 3).map((insight: any) => (
-                    <div key={insight.id} className="bg-surface p-sm rounded-lg flex items-start gap-sm group cursor-pointer hover:bg-surface-container-high transition-colors">
+                    <div 
+                      key={insight.id} 
+                      onClick={() => {
+                        if (insight.title?.toLowerCase().includes('connect') || insight.title?.toLowerCase().includes('key') || insight.description?.toLowerCase().includes('key')) {
+                          setShowAiModal(true);
+                        } else {
+                          router.push('/ai-assistant');
+                        }
+                      }}
+                      className="bg-surface p-sm rounded-lg flex items-start gap-sm group cursor-pointer hover:bg-surface-container-high transition-colors"
+                    >
                       <div className="mt-1">
                         <span className="material-symbols-outlined text-tertiary-container text-[18px]">
                           {insight.type === 'leak' ? 'receipt_long' : insight.type === 'alert' ? 'warning' : 'lightbulb'}
@@ -282,6 +333,17 @@ export default function DashboardPage() {
                     <span className="font-body-md text-[12px] text-on-surface-variant mt-1">Keep spending and our AI will generate personalized tips.</span>
                   </div>
                 )}
+                
+                <button
+                  onClick={() => setShowAiModal(true)}
+                  className="w-full mt-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 border border-blue-500/40 flex items-center justify-between text-xs font-bold text-primary transition-all group shadow-sm"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[16px] text-blue-400 animate-pulse">key</span>
+                    <span>{hasCustomKey ? 'Manage AI Copilot API Key' : '⚡ Connect Live AI Key (Gemini/OpenRouter)'}</span>
+                  </div>
+                  <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
               </div>
             </div>
           </div>
