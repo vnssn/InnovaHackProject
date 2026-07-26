@@ -49,3 +49,14 @@ app.include_router(api_router)
 @app.get("/health")
 async def health():
     return {"status": "healthy", "app": settings.APP_NAME}
+
+
+@app.get("/health/db")
+async def health_db():
+    try:
+        from sqlalchemy import select
+        async with engine.connect() as conn:
+            await conn.execute(select(1))
+        return {"status": "healthy", "database": "connected", "url_type": str(engine.url).split(":")[0]}
+    except Exception as e:
+        return {"status": "error", "database": "disconnected", "detail": str(e)}

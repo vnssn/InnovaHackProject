@@ -8,11 +8,16 @@ db_url = os.getenv("DATABASE_URL") or os.getenv("DATABASE_PUBLIC_URL") or os.get
 
 if db_url == "postgresql+asyncpg://postgres:postgres@localhost:5432/finacial_copilot" and os.getenv("PGHOST"):
     pghost = os.getenv("PGHOST")
-    pgport = os.getenv("PGPORT", "5432")
-    pguser = os.getenv("PGUSER", "postgres")
-    pgpassword = os.getenv("PGPASSWORD", "")
-    pgdb = os.getenv("PGDATABASE", "postgres")
-    db_url = f"postgresql+asyncpg://{pguser}:{pgpassword}@{pghost}:{pgport}/{pgdb}"
+    if pghost != "localhost" and pghost != "127.0.0.1":
+        pgport = os.getenv("PGPORT", "5432")
+        pguser = os.getenv("PGUSER", "postgres")
+        pgpassword = os.getenv("PGPASSWORD", "")
+        pgdb = os.getenv("PGDATABASE", "postgres")
+        db_url = f"postgresql+asyncpg://{pguser}:{pgpassword}@{pghost}:{pgport}/{pgdb}"
+
+# If deployed to Railway/cloud without remote Postgres linked, use SQLite so the app runs smoothly
+if ("localhost" in db_url or "127.0.0.1" in db_url) and (os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("PORT")):
+    db_url = "sqlite+aiosqlite:///./spendsense.db"
 
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
